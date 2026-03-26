@@ -391,6 +391,11 @@
 
       <pre><code id="modalCode"></code></pre>
 
+      <section class="notes-box" style="margin-top:14px;">
+        <h3>Como conduzir ao vivo</h3>
+        <p class="tight muted" id="modalAskAloud"></p>
+      </section>
+
       <section class="reveal-box" id="hintBox">
         <h3>Dica</h3>
         <div class="answer-text" id="modalHint"></div>
@@ -442,13 +447,14 @@
             answer: 'Ele soma os inteiros de 0 até a0 - 1.\n\nPapéis dos registradores:\n- t0 = contador do laço\n- t1 = soma acumulada\n\nCódigo equivalente em alto nível:\nfor (i = 0; i < a0; i++) sum += i;\n\nSignificado final: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
           },
           {
-            points: 40,
-            title: "Laço com branch condicional interno",
-            prompt: "Suponha que a0 = 5. Quantas vezes o bloco \"odd\" é executado e qual é o valor final de t1?",
-            code: "li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    andi t2, t0, 1\n    bnez t2, odd\n    addi t1, t1, 10\n    j next\n\nodd:\n    addi t1, t1, 1\n\nnext:\n    addi t0, t0, 1\n    j loop\n\nend:",
-            hint: "O teste com andi verifica se t0 é ímpar ou par.",
-            answer: "Com a0 = 5, o laço executa para t0 = 0, 1, 2, 3, 4.\n\nCasos pares (0, 2, 4): somam 10 em t1.\nCasos ímpares (1, 3): executam odd e somam 1 em t1.\n\nO bloco odd executa 2 vezes.\nValor final de t1 = 10 + 1 + 10 + 1 + 10 = 32."
-          },
+            "points": 40,
+            "title": "Laço com branch condicional interno",
+            "prompt": "Suponha que a0 = 5. Quantas vezes o bloco \"odd\" é executado e qual é o valor final de t1?",
+            "askAloud": "Peça para a equipe acompanhar o valor de t0 a cada iteração e identificar em quais casos o branch para odd é tomado.",
+            "code": "li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    andi t2, t0, 1\n    bnez t2, odd\n    addi t1, t1, 10\n    j next\n\nodd:\n    addi t1, t1, 1\n\nnext:\n    addi t0, t0, 1\n    j loop\n\nend:",
+            "hint": "O teste com andi verifica se t0 é ímpar ou par.",
+            "answer": "Com a0 = 5, o laço executa para t0 = 0, 1, 2, 3, 4.\n\nCasos pares (0, 2, 4): somam 10 em t1.\nCasos ímpares (1, 3): executam odd e somam 1 em t1.\n\nO bloco odd executa 2 vezes.\nValor final de t1 = 10 + 1 + 10 + 1 + 10 = 32."
+          }
         ]
       },
       {
@@ -477,15 +483,7 @@
             code: `li t0, 0x1000\nlb  t1, 0(t0)\nlbu t2, 0(t0)`,
             hint: 'Pense no que 0xFF significa como valor assinado de 8 bits.',
             answer: 'lb faz extensão de sinal no byte. Como 0xFF é -1 em 8 bits com sinal, t1 vira -1 (todos os bits em 1 em 32 bits).\n\nlbu faz extensão com zeros, então t2 vira 255.\n\nValores finais:\n- t1 = -1\n- t2 = 255.'
-          },
-          {
-          points: 40,
-          title: "Troca parcial com escrita em memória",
-          prompt: "Suponha que arr começa com os valores 8, 3, 5, 1. Qual é o vetor final após a execução?",
-          code: ".data\narr: .word 8, 3, 5, 1\n\n.text\nla t0, arr\nlw t1, 0(t0)\nlw t2, 8(t0)\nadd t3, t1, t2\nsw t3, 4(t0)\nlw t4, 12(t0)\nsub t5, t3, t4\nsw t5, 0(t0)",
-          hint: "Os offsets 0, 4, 8 e 12 correspondem a arr[0], arr[1], arr[2] e arr[3].",
-          answer: "Valores iniciais:\narr[0] = 8, arr[1] = 3, arr[2] = 5, arr[3] = 1\n\nLoads:\n- t1 = 8\n- t2 = 5\n- t3 = 8 + 5 = 13\n\nPrimeiro store:\n- arr[1] = 13\n\nDepois:\n- t4 = arr[3] = 1\n- t5 = 13 - 1 = 12\n\nSegundo store:\n- arr[0] = 12\n\nVetor final: 12, 13, 5, 1."
-        },
+          }
         ]
       },
       {
@@ -514,15 +512,7 @@
             code: `la t0, label`,
             hint: 'Pense em endereçamento relativo ao PC, não absoluto.',
             answer: 'Uma expansão comum se baseia em auipc mais uma instrução que soma o offset, como addi, com relocations tratadas pelo assembler e pelo linker.\n\nIdeia central:\n- auipc forma uma base relativa ao PC\n- addi completa o endereço\n\nPor quê: isso permite código position-independent e evita fixar um único endereço absoluto no fluxo de instruções.'
-          },
-          {
-            points: 40,
-            title: "Endereço relativo ao PC com deslocamento negativo",
-            prompt: "Suponha que a instrução auipc abaixo está no endereço 0x00020000. Qual é o valor final em t0?",
-            code: "auipc t0, 0x2\naddi  t0, t0, -32",
-            hint: "auipc soma ao PC o imediato deslocado 12 bits à esquerda.",
-            answer: "Cálculo do auipc:\n- PC = 0x00020000\n- 0x2 << 12 = 0x00002000\n- após auipc: t0 = 0x00022000\n\nDepois:\n- addi t0, t0, -32\n- 32 decimal = 0x20\n- t0 = 0x00022000 - 0x20 = 0x00021FE0\n\nValor final: 0x00021FE0."
-          },
+          }
         ]
       },
       {
@@ -551,15 +541,7 @@
             code: `la t0, arr\nli t1, 4\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 10\n    addi t0, t0, 4\n    bnez t1, loop`,
             hint: 'Pense no que muda na memória e no que faz um laço progredir.',
             answer: 'Bug 1: falta o store. O valor atualizado em t2 nunca é gravado de volta na memória.\n\nBug 2: t1 nunca é decrementado, então o laço não termina.\n\nUma versão correta precisaria dos dois:\n- sw t2, 0(t0)\n- addi t1, t1, -1'
-          },
-          {
-            points: 40,
-            title: "Bug sutil em acesso a vetor",
-            prompt: "O programador quer somar arr[i] em sum, assumindo base de arr em s0, i em s1 e sum em s2. Explique o bug e dê uma correção.",
-            code: "add  t0, s0, s1\nlw   t1, 0(t0)\nadd  s2, s2, t1",
-            hint: "s1 representa índice de vetor, não deslocamento em bytes.",
-            answer: "O bug é que o índice i em s1 está sendo somado diretamente ao endereço base, como se já fosse um offset em bytes.\n\nSe arr é um vetor de words, cada elemento ocupa 4 bytes. Então o índice precisa ser escalado por 4 antes do acesso.\n\nUma correção é:\n\nslli t0, s1, 2\nadd  t0, s0, t0\nlw   t1, 0(t0)\nadd  s2, s2, t1"
-          },
+          }
         ]
       },
       {
@@ -570,231 +552,4 @@
             title: 'Que pseudoinstrução é essa?',
             prompt: 'Diga a pseudoinstrução equivalente a cada forma de instrução real.',
             code: `addi t0, t1, 0\njal  x0, label\njalr x0, 0(ra)`,
-            hint: 'Essas três aparecem o tempo todo em código escrito à mão.',
-            answer: 'Pseudoinstruções equivalentes:\n- addi t0, t1, 0  -> mv t0, t1\n- jal x0, label   -> j label\n- jalr x0, 0(ra)  -> ret'
-          },
-          {
-            points: 20,
-            title: 'O que esse laço conta?',
-            prompt: 'Suponha que arr tenha 5 inteiros. Que quantidade fica armazenada em t2 no final?',
-            code: `la t0, arr\nli t1, 5\nli t2, 0\n\nloop:\n    lw t3, 0(t0)\n    blt t3, x0, neg\n    j next\n\nneg:\n    addi t2, t2, 1\n\nnext:\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
-            hint: 'Só um tipo de elemento faz t2 aumentar.',
-            answer: 'O laço percorre 5 inteiros de arr e conta quantos são negativos.\n\nSignificado final:\nt2 = número de elementos negativos no vetor.'
-          },
-          {
-            points: 30,
-            title: 'Chefão final',
-            prompt: 'O que esse código faz e qual erro sutil impede que ele calcule a média verdadeira de 6 números?',
-            code: `la t0, arr\nli t1, 6\nli t2, 0\n\nloop:\n    beqz t1, end\n    lw t3, 0(t0)\n    add t2, t2, t3\n    addi t0, t0, 4\n    addi t1, t1, -1\n    j loop\n\nend:\nsrai a0, t2, 1`,
-            hint: 'O laço realmente soma 6 valores. O problema está apenas no final.',
-            answer: 'O laço soma corretamente 6 elementos do vetor em t2.\n\nA ideia de alto nível parece ser calcular uma média ou algum valor escalonado a partir da soma.\n\nMas a última linha faz um shift aritmético à direita por 1, que divide por 2, e não por 6.\n\nPortanto, o código NÃO calcula a média de 6 números. Ele calcula soma / 2 (com semântica de shift assinado), o que só estaria correto para outra tarefa completamente diferente.'
-          },
-          {
-            points: 40,
-            title: "Reconstruindo a lógica do algoritmo",
-            prompt: "Suponha que arr contém os valores 2, -1, 4, -3 e que a0 aponta para arr. O que esse código calcula e qual é o valor final em t1?",
-            code: "mv t0, a0\nli t1, 0\nli t2, 4\n\nloop:\n    beqz t2, end\n    lw t3, 0(t0)\n    blt t3, x0, skip\n    add t1, t1, t3\n\nskip:\n    addi t0, t0, 4\n    addi t2, t2, -1\n    j loop\n\nend:",
-            hint: "Nem todo elemento é somado em t1.",
-            answer: "O código percorre 4 elementos do vetor e soma apenas os que não são negativos.\n\nElementos:\n- 2  -> soma\n- -1 -> ignora\n- 4  -> soma\n- -3 -> ignora\n\nPortanto, ele calcula a soma dos elementos não negativos.\n\nValor final de t1 = 2 + 4 = 6."
-          },
-        ]
-      },
-      {
-        category: 'Tradução de C para Assembly',
-        questions: [
-          {
-            points: 10,
-            title: 'Atribuição simples',
-            prompt: 'Traduza para RISC-V, assumindo x em s0, y em s1 e z em s2: z = x + y;',
-            code: `// C\nz = x + y;`,
-            hint: 'Todas as variáveis já estão em registradores.',
-            answer: 'Uma solução correta é:\nadd s2, s0, s1'
-          },
-          {
-            points: 20,
-            title: 'If simples',
-            prompt: 'Traduza para RISC-V, assumindo x em s0 e y em s1: if (x < y) x = x + 1;',
-            code: `// C\nif (x < y)\n x = x + 1;`,
-            hint: 'Uma solução limpa é pular o corpo quando a condição for falsa.',
-            answer: 'Uma solução correta é:\nbge s0, s1, end\naddi s0, s0, 1\nend:'
-          },
-          {
-            points: 30,
-            title: 'Laço while',
-            prompt: 'Traduza para RISC-V, assumindo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }',
-            code: '// C\nwhile (i < 10) {\n sum += i;\n i++;\n}',
-            hint: 'Você precisa de um rótulo do laço, um teste e um jump de volta.',
-            answer: 'Uma solução correta é:\nloop:\nli t0, 10\nbge s0, t0, end\nadd s1, s1, s0\naddi s0, s0, 1\nj loop\nend:'
-          },
-          {
-            points: 40,
-            title: "Tradução com vetor e atribuição composta",
-            prompt: "Traduza para RISC-V, assumindo base de arr em s0, i em s1 e sum em s2: sum = sum + arr[i];",
-            code: "// C\nsum = sum + arr[i];",
-            hint: "Primeiro calcule o endereço de arr[i]. Depois carregue o valor e some em sum.",
-            answer: "Uma solução correta é:\n\nslli t0, s1, 2\nadd  t0, s0, t0\nlw   t1, 0(t0)\nadd  s2, s2, t1"
-          },
-        ]
-      },
-    ];
-
-    const state = {
-      scoreA: 0,
-      scoreB: 0,
-      currentTeam: 'A',
-      currentQuestion: null,
-      used: new Set()
-    };
-
-    const boardEl = document.getElementById('board');
-    const scoreAEl = document.getElementById('scoreA');
-    const scoreBEl = document.getElementById('scoreB');
-    const teamANameEl = document.getElementById('teamAName');
-    const teamBNameEl = document.getElementById('teamBName');
-    const turnBadgeEl = document.getElementById('turnBadge');
-    const modalEl = document.getElementById('questionModal');
-    const hintBoxEl = document.getElementById('hintBox');
-    const answerBoxEl = document.getElementById('answerBox');
-
-    function teamName(team) {
-      return team === 'A' ? teamANameEl.value || 'Equipe A' : teamBNameEl.value || 'Equipe B';
-    }
-
-    function updateTurnBadge() {
-      turnBadgeEl.textContent = `Vez atual: ${teamName(state.currentTeam)}`;
-    }
-
-    function renderScores() {
-      scoreAEl.textContent = state.scoreA;
-      scoreBEl.textContent = state.scoreB;
-      updateTurnBadge();
-    }
-
-    function adjustScore(team, delta) {
-      if (team === 'A') state.scoreA += delta;
-      else state.scoreB += delta;
-      renderScores();
-    }
-
-    function switchTurn() {
-      state.currentTeam = state.currentTeam === 'A' ? 'B' : 'A';
-      renderScores();
-      if (state.currentQuestion) {
-        document.getElementById('modalTurn').textContent = `Vez: ${teamName(state.currentTeam)}`;
-      }
-    }
-
-    function resetScores() {
-      state.scoreA = 0;
-      state.scoreB = 0;
-      renderScores();
-    }
-
-    function resetBoard() {
-      state.used.clear();
-      closeModal();
-      buildBoard();
-    }
-
-    function qid(catIndex, qIndex) {
-      return `${catIndex}-${qIndex}`;
-    }
-
-    function buildBoard() {
-      boardEl.innerHTML = '';
-      gameData.forEach((category, catIndex) => {
-        const card = document.createElement('section');
-        card.className = 'category';
-
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.textContent = category.category;
-        card.appendChild(header);
-
-        const qs = document.createElement('div');
-        qs.className = 'questions';
-
-        category.questions.forEach((q, qIndex) => {
-          const button = document.createElement('button');
-          const id = qid(catIndex, qIndex);
-          button.className = 'qbtn';
-          button.textContent = q.points;
-          if (state.used.has(id)) {
-            button.classList.add('used');
-            button.disabled = true;
-          } else {
-            button.addEventListener('click', () => openQuestion(catIndex, qIndex));
-          }
-          qs.appendChild(button);
-        });
-
-        card.appendChild(qs);
-        boardEl.appendChild(card);
-      });
-    }
-
-    function openQuestion(catIndex, qIndex) {
-      const q = gameData[catIndex].questions[qIndex];
-      state.currentQuestion = { ...q, catIndex, qIndex, id: qid(catIndex, qIndex) };
-
-      document.getElementById('modalTitle').textContent = q.title;
-      document.getElementById('modalCategory').textContent = gameData[catIndex].category;
-      document.getElementById('modalPoints').textContent = `${q.points} pontos`;
-      document.getElementById('modalTurn').textContent = `Vez: ${teamName(state.currentTeam)}`;
-      document.getElementById('modalPrompt').textContent = q.prompt;
-      document.getElementById('modalCode').textContent = q.code;
-      document.getElementById('modalAskAloud').textContent = q.askAloud;
-      document.getElementById('modalHint').textContent = q.hint;
-      document.getElementById('modalAnswer').textContent = q.answer;
-      hintBoxEl.classList.remove('show');
-      answerBoxEl.classList.remove('show');
-      modalEl.classList.add('show');
-    }
-
-    function closeModal() {
-      modalEl.classList.remove('show');
-      state.currentQuestion = null;
-    }
-
-    function toggleReveal(type) {
-      if (type === 'hint') hintBoxEl.classList.toggle('show');
-      if (type === 'answer') answerBoxEl.classList.toggle('show');
-    }
-
-    function markClosed() {
-      if (!state.currentQuestion) return;
-      state.used.add(state.currentQuestion.id);
-      buildBoard();
-      closeModal();
-    }
-
-    function awardCurrent() {
-      if (!state.currentQuestion) return;
-      adjustScore(state.currentTeam, state.currentQuestion.points);
-    }
-
-    function awardSteal() {
-      if (!state.currentQuestion) return;
-      const other = state.currentTeam === 'A' ? 'B' : 'A';
-      adjustScore(other, Math.floor(state.currentQuestion.points / 2));
-    }
-
-    async function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        await document.exitFullscreen().catch(() => {});
-      }
-    }
-
-    teamANameEl.addEventListener('input', renderScores);
-    teamBNameEl.addEventListener('input', renderScores);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modalEl.classList.contains('show')) closeModal();
-    });
-
-    renderScores();
-    buildBoard();
-  </script>
-</body>
-</html>
+            hint: 'Essas três aparecem o tempo todo em código 

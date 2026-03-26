@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RISC-V Team Quiz</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131a31;
+      --panel-2: #1a2340;
+      --text: #eef2ff;
+      --muted: #a9b3d1;
+      --accent: #7dd3fc;
+      --accent-2: #a78bfa;
+      --good: #86efac;
+      --warn: #fcd34d;
+      --bad: #fca5a5;
+      --used: #0f172a;
+      --border: #2a3560;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0b1020 0%, #0d1328 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1.2fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(19, 26, 49, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+    }
+
+    .team {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .team h2, .center-panel h1 {
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .team-name-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .team input {
+      width: 100%;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 1rem;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .score-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .center-panel {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .center-panel p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .turn-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(90deg, rgba(125,211,252,0.18), rgba(167,139,250,0.18));
+      border: 1px solid rgba(167,139,250,0.35);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin: 0 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      background: linear-gradient(180deg, #25345f, #1a2445);
+      color: var(--text);
+      border: 1px solid #41528a;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.08s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    button.secondary { background: #18213d; }
+    button.good { background: linear-gradient(180deg, #1d5e3c, #15442b); border-color: #2d8b58; }
+    button.warn { background: linear-gradient(180deg, #6a5313, #4f3d0d); border-color: #b58b1f; }
+    button.bad { background: linear-gradient(180deg, #6b2626, #4b1919); border-color: #b14a4a; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .category {
+      background: rgba(19, 26, 49, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .category-header {
+      padding: 16px 14px;
+      background: linear-gradient(180deg, rgba(125,211,252,0.14), rgba(167,139,250,0.1));
+      border-bottom: 1px solid var(--border);
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .questions {
+      display: grid;
+      grid-template-rows: repeat(3, 1fr);
+      gap: 12px;
+      padding: 14px;
+      flex: 1;
+    }
+
+    .qbtn {
+      min-height: 90px;
+      font-size: 1.75rem;
+      font-weight: 900;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #1b2850, #121b37);
+    }
+
+    .qbtn.used {
+      background: var(--used);
+      color: #5f6b8d;
+      border-color: #233051;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .legend {
+      margin-top: 16px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 20, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 10;
+    }
+
+    .modal.show { display: flex; }
+
+    .modal-card {
+      width: min(1100px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: #0f1730;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+      padding: 24px;
+    }
+
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .modal-top h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.6rem;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      background: rgba(125,211,252,0.14);
+      color: var(--accent);
+      border: 1px solid rgba(125,211,252,0.3);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .ask-box, .reveal-box, .notes-box {
+      background: rgba(26, 35, 64, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .ask-box h3, .reveal-box h3, .notes-box h3 {
+      margin: 0 0 10px 0;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      background: #081022;
+      border: 1px solid #223158;
+      border-radius: 18px;
+      overflow: auto;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: #e8eeff;
+    }
+
+    code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+
+    .reveal-box {
+      display: none;
+    }
+
+    .reveal-box.show {
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .answer-text {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      color: #edf1ff;
+    }
+
+    .muted { color: var(--muted); }
+    .tight { margin: 0; }
+
+    @media (max-width: 1100px) {
+      .topbar { grid-template-columns: 1fr; }
+      .board { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .board { grid-template-columns: 1fr; }
+      .modal-card { padding: 18px; }
+      .score { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <section class="card team" id="teamABox">
+        <div class="team-name-row">
+          <h2>Team A</h2>
+          <input id="teamAName" value="Team A" aria-label="Team A name" />
+        </div>
+        <div class="score" id="scoreA">0</div>
+        <div class="score-controls">
+          <button onclick="adjustScore('A', 10)">+10</button>
+          <button onclick="adjustScore('A', 20)">+20</button>
+          <button onclick="adjustScore('A', 30)">+30</button>
+          <button class="secondary" onclick="adjustScore('A', 2)">+2 explain</button>
+          <button class="bad" onclick="adjustScore('A', -5)">-5</button>
+        </div>
+      </section>
+
+      <section class="card center-panel">
+        <h1>RISC-V Faceoff</h1>
+        <p>Choose a category, let the team discuss, call one student to answer, and allow a steal if needed.</p>
+        <div class="turn-badge" id="turnBadge">Current turn: Team A</div>
+        <div class="toolbar">
+          <button onclick="switchTurn()">Switch turn</button>
+          <button class="secondary" onclick="toggleFullscreen()">Fullscreen</button>
+          <button class="warn" onclick="resetScores()">Reset scores</button>
+          <button class="bad" onclick="resetBoard()">Reset board</button>
+        </div>
+      </section>
+
+      <section class="card team" id="teamBBox">
+        <div class="team-name-row">
+          <h2>Team B</h2>
+          <input id="teamBName" value="Team B" aria-label="Team B name" />
+        </div>
+        <div class="score" id="scoreB">0</div>
+        <div class="score-controls">
+          <button onclick="adjustScore('B', 10)">+10</button>
+          <button onclick="adjustScore('B', 20)">+20</button>
+          <button onclick="adjustScore('B', 30)">+30</button>
+          <button class="secondary" onclick="adjustScore('B', 2)">+2 explain</button>
+          <button class="bad" onclick="adjustScore('B', -5)">-5</button>
+        </div>
+      </section>
+    </div>
+
+    <main class="board" id="board"></main>
+    <div class="legend">Default points: correct answer = face value, steal = half value, good explanation bonus = +2. Edit scores manually if you want different rules.</div>
+  </div>
+
+  <div class="modal" id="questionModal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div>
+          <h2 id="modalTitle">Question</h2>
+          <div class="pill-row">
+            <span class="pill" id="modalCategory"></span>
+            <span class="pill" id="modalPoints"></span>
+            <span class="pill" id="modalTurn"></span>
+          </div>
+        </div>
+        <button class="secondary" onclick="closeModal()">Close</button>
+      </div>
+
+      <section class="ask-box">
+        <h3>Prompt</h3>
+        <p class="tight" id="modalPrompt"></p>
+      </section>
+
+      <pre><code id="modalCode"></code></pre>
+
+      <section class="notes-box" style="margin-top:14px;">
+        <h3>How to run it live</h3>
+        <p class="tight muted" id="modalAskAloud"></p>
+      </section>
+
+      <section class="reveal-box" id="hintBox">
+        <h3>Hint</h3>
+        <div class="answer-text" id="modalHint"></div>
+      </section>
+
+      <section class="reveal-box" id="answerBox">
+        <h3>Answer</h3>
+        <div class="answer-text" id="modalAnswer"></div>
+      </section>
+
+      <div class="modal-actions">
+        <button onclick="toggleReveal('hint')">Show / hide hint</button>
+        <button class="good" onclick="toggleReveal('answer')">Show / hide answer</button>
+        <button class="good" onclick="awardCurrent()">Award current team</button>
+        <button class="warn" onclick="awardSteal()">Award steal</button>
+        <button onclick="switchTurn()">Switch turn</button>
+        <button class="secondary" onclick="markClosed()">Mark question done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const gameData = [
+      {
+        category: 'Control Flow',
+        questions: [
+          {
+            points: 10,
+            title: 'Which path executes?',
+            prompt: 'Trace the control flow. Which instructions are skipped, and what is the final value of t2?',
+            askAloud: 'Ask one student only for the path. Ask a second student for the final value and why.',
+            code: `li t0, 7\nli t1, 10\nblt t0, t1, L1\naddi t2, x0, 1\nj L2\n\nL1:\naddi t2, x0, 2\n\nL2:\naddi t2, t2, 3`,
+            hint: 'First decide whether the branch is taken. Only then compute t2.',
+            answer: '7 < 10, so the branch to L1 is taken.\n\nSkipped:\n- addi t2, x0, 1\n- j L2\n\nExecuted path:\nblt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3\n\nFinal value: t2 = 5.'
+          },
+          {
+            points: 20,
+            title: 'Loop count trap',
+            prompt: 'Does this loop terminate? How many times does the loop body execute?',
+            askAloud: 'Let the team discuss for 15 seconds. Most people answer too fast here.',
+            code: `li t0, 3\n\nloop:\n    addi t0, t0, -1\n    bge t0, x0, loop`,
+            hint: 'Track t0 after the decrement, not before it.',
+            answer: 'Yes, it terminates.\n\nValues after each decrement: 2, 1, 0, -1.\nThe branch repeats while t0 >= 0.\n\nSo the body executes 4 times, not 3.'
+          },
+          {
+            points: 30,
+            title: 'What high-level construct is this?',
+            prompt: 'Explain what this snippet computes and which high-level loop it corresponds to.',
+            askAloud: 'First ask for the meaning of each register, then ask for the C-like version.',
+            code: `li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    add t1, t1, t0\n    addi t0, t0, 1\n    j loop\n\nend:`,
+            hint: 't0 behaves like an index or counter. t1 is an accumulator.',
+            answer: 'It sums integers from 0 up to a0 - 1.\n\nRegister roles:\n- t0 = loop counter\n- t1 = running sum\n\nEquivalent high-level code:\nfor (i = 0; i < a0; i++) sum += i;\n\nFinal meaning: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
+          }
+        ]
+      },
+      {
+        category: 'Memory',
+        questions: [
+          {
+            points: 10,
+            title: 'What changes in memory?',
+            prompt: 'Assume arr starts as 10, 20, 30, 40. What values are loaded, and what is the final array?',
+            askAloud: 'Have one student compute the loads and another say what gets stored back.',
+            code: `.data\narr: .word 10, 20, 30, 40\n\n.text\nla t0, arr\nlw t1, 4(t0)\nlw t2, 8(t0)\nadd t3, t1, t2\nsw t3, 0(t0)`,
+            hint: 'Offsets are in bytes. Each word is 4 bytes.',
+            answer: 'Loaded values:\n- t1 = 20\n- t2 = 30\n\nThen t3 = 50 and 50 is stored at arr[0].\n\nFinal array: 50, 20, 30, 40.'
+          },
+          {
+            points: 20,
+            title: 'Which array element is accessed?',
+            prompt: 'Which element is loaded, and why is there a shift by 2?',
+            askAloud: 'Ask for both the address arithmetic and the high-level array notation.',
+            code: `la t0, arr\nli t1, 3\nslli t1, t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
+            hint: 'Word indexing needs scaling by 4 bytes.',
+            answer: 'The code loads arr[3].\n\nReason:\n- t1 starts as index 3\n- shifting left by 2 multiplies by 4\n- t2 = base address + 12\n- lw then loads the word at that computed address\n\nThe shift by 2 converts a word index into a byte offset.'
+          },
+          {
+            points: 30,
+            title: 'lb vs lbu',
+            prompt: 'Memory at address 0x1000 contains the byte 0xFF. What is the difference between t1 and t2?',
+            askAloud: 'This is a good signed-vs-unsigned trap. Ask them to say the numeric values, not just “sign-extended.”',
+            code: `li t0, 0x1000\nlb  t1, 0(t0)\nlbu t2, 0(t0)`,
+            hint: 'Think about what 0xFF means as a signed 8-bit value.',
+            answer: 'lb sign-extends the byte. Since 0xFF is -1 in signed 8-bit form, t1 becomes -1 (all bits set in 32-bit form).\n\nlbu zero-extends the byte, so t2 becomes 255.\n\nFinal values:\n- t1 = -1\n- t2 = 255.'
+          }
+        ]
+      },
+      {
+        category: 'Address Building',
+        questions: [
+          {
+            points: 10,
+            title: 'Complete the address',
+            prompt: 'Which instruction goes in the blank, and what value ends in t0?',
+            askAloud: 'First ask for the missing instruction. Then ask why lui alone is not enough.',
+            code: `lui t0, 0x12345\n_____ t0, t0, 0x678`,
+            hint: 'lui gives the upper 20 bits. Something else must finish the low part.',
+            answer: 'The missing instruction is addi.\n\nResult:\nt0 = 0x12345000 + 0x678 = 0x12345678.\n\nWhy lui alone is not enough: it only places the upper 20 bits and clears the lower 12 bits.'
+          },
+          {
+            points: 20,
+            title: 'PC-relative thinking',
+            prompt: 'Suppose this auipc instruction is located at address 0x00010000. What value ends up in t0?',
+            askAloud: 'Make them say the conceptual meaning first: PC-relative address construction.',
+            code: `auipc t0, 0x1\naddi  t0, t0, 16`,
+            hint: 'auipc adds the immediate shifted left by 12 to the current PC.',
+            answer: 'auipc t0, 0x1 means: t0 = PC + (0x1 << 12).\n\nAt PC = 0x00010000:\n- after auipc: t0 = 0x00011000\n- after addi 16: t0 = 0x00011010\n\nFinal value: 0x00011010.\n\nConceptually, this is PC-relative address formation.'
+          },
+          {
+            points: 30,
+            title: 'la vs manual expansion',
+            prompt: 'The pseudo-instruction la loads an address. Which pair of real instructions is typically used under the hood in position-independent style, and why?',
+            askAloud: 'This one is more conceptual. Ask for the instruction pair and the reason.',
+            code: `la t0, label`,
+            hint: 'Think PC-relative, not absolute addressing.',
+            answer: 'A common expansion is based on auipc plus an offset-adding instruction such as addi, with relocations handled by the assembler and linker.\n\nCore idea:\n- auipc forms a PC-relative base\n- addi finishes the address\n\nWhy: this supports position-independent code and avoids hardcoding one fixed absolute address into the instruction stream.'
+          }
+        ]
+      },
+      {
+        category: 'Bug Hunt',
+        questions: [
+          {
+            points: 10,
+            title: 'Missing store',
+            prompt: 'The programmer wants to increment every element of an array. Why does this fail?',
+            askAloud: 'Let one student explain the intention and another identify the exact missing instruction.',
+            code: `la t0, arr\nli t1, 3\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 1\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
+            hint: 'A register changed, but memory did not.',
+            answer: 'The code loads each element and increments the value in t2, but it never writes the result back.\n\nMissing instruction: sw t2, 0(t0)\n\nIt should appear before the pointer advances.'
+          },
+          {
+            points: 20,
+            title: 'Wrong index scaling',
+            prompt: 'If the programmer wanted arr[2], what is wrong here?',
+            askAloud: 'Ask for both the bug and one correct fix.',
+            code: `la t0, arr\nli t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
+            hint: 'An array index is not the same thing as a byte offset.',
+            answer: 'The code adds the raw index 2 directly to the base address. That means it moves 2 bytes, not 2 words.\n\nBug: index not scaled by 4.\n\nPossible fixes:\n- slli t1, t1, 2 ; add t2, t0, t1\n- or directly use lw t3, 8(t0) if the index is known.'
+          },
+          {
+            points: 30,
+            title: 'Two bugs',
+            prompt: 'This loop is supposed to add 10 to each array element. Find the two bugs.',
+            askAloud: 'Require both bugs for full points. If they find one only, let the other team try to steal the second.',
+            code: `la t0, arr\nli t1, 4\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 10\n    addi t0, t0, 4\n    bnez t1, loop`,
+            hint: 'Think about what changes in memory and what makes a loop progress.',
+            answer: 'Bug 1: missing store. The updated value in t2 is never written back to memory.\n\nBug 2: t1 is never decremented, so the loop does not terminate.\n\nA corrected version would include both:\n- sw t2, 0(t0)\n- addi t1, t1, -1'
+          }
+        ]
+      },
+      {
+        category: 'Mixed Challenge',
+        questions: [
+          {
+            points: 10,
+            title: 'Which pseudo-instruction is this?',
+            prompt: 'Name the pseudo-instruction equivalent to each real instruction form.',
+            askAloud: 'Do it fast: first pseudo-instruction, then the next one.',
+            code: `addi t0, t1, 0\njal  x0, label\njalr x0, 0(ra)`,
+            hint: 'These three appear all the time in hand-written code.',
+            answer: 'Equivalent pseudo-instructions:\n- addi t0, t1, 0  -> mv t0, t1\n- jal x0, label   -> j label\n- jalr x0, 0(ra)  -> ret'
+          },
+          {
+            points: 20,
+            title: 'What does this loop count?',
+            prompt: 'Assume arr holds 5 integers. What quantity is stored in t2 at the end?',
+            askAloud: 'Ask them to describe the algorithm in one sentence, not just give a register value.',
+            code: `la t0, arr\nli t1, 5\nli t2, 0\n\nloop:\n    lw t3, 0(t0)\n    blt t3, x0, neg\n    j next\n\nneg:\n    addi t2, t2, 1\n\nnext:\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
+            hint: 'Only one kind of element makes t2 increase.',
+            answer: 'The loop scans 5 integers from arr and counts how many are negative.\n\nFinal meaning:\nt2 = number of negative elements in the array.'
+          },
+          {
+            points: 30,
+            title: 'Final boss',
+            prompt: 'What does this code do, and what subtle mistake prevents it from computing the true average of 6 numbers?',
+            askAloud: 'Require both parts: intended algorithm and the exact flaw.',
+            code: `la t0, arr\nli t1, 6\nli t2, 0\n\nloop:\n    beqz t1, end\n    lw t3, 0(t0)\n    add t2, t2, t3\n    addi t0, t0, 4\n    addi t1, t1, -1\n    j loop\n\nend:\nsrai a0, t2, 1`,
+            hint: 'The loop does sum 6 values. The problem is only at the very end.',
+            answer: 'The loop correctly sums 6 array elements into t2.\n\nIntended high-level idea: compute an average or some scaled result from the sum.\n\nBut the final line does arithmetic right shift by 1, which divides by 2, not by 6.\n\nSo the code does NOT compute the average of 6 numbers. It computes sum / 2 (using signed shift semantics), which is only correct for a completely different task.'
+          }
+        ]
+      }
+    ];
+
+    const state = {
+      scoreA: 0,
+      scoreB: 0,
+      currentTeam: 'A',
+      currentQuestion: null,
+      used: new Set()
+    };
+
+    const boardEl = document.getElementById('board');
+    const scoreAEl = document.getElementById('scoreA');
+    const scoreBEl = document.getElementById('scoreB');
+    const teamANameEl = document.getElementById('teamAName');
+    const teamBNameEl = document.getElementById('teamBName');
+    const turnBadgeEl = document.getElementById('turnBadge');
+    const modalEl = document.getElementById('questionModal');
+    const hintBoxEl = document.getElementById('hintBox');
+    const answerBoxEl = document.getElementById('answerBox');
+
+    function teamName(team) {
+      return team === 'A' ? teamANameEl.value || 'Team A' : teamBNameEl.value || 'Team B';
+    }
+
+    function updateTurnBadge() {
+      turnBadgeEl.textContent = `Current turn: ${teamName(state.currentTeam)}`;
+    }
+
+    function renderScores() {
+      scoreAEl.textContent = state.scoreA;
+      scoreBEl.textContent = state.scoreB;
+      updateTurnBadge();
+    }
+
+    function adjustScore(team, delta) {
+      if (team === 'A') state.scoreA += delta;
+      else state.scoreB += delta;
+      renderScores();
+    }
+
+    function switchTurn() {
+      state.currentTeam = state.currentTeam === 'A' ? 'B' : 'A';
+      renderScores();
+      if (state.currentQuestion) {
+        document.getElementById('modalTurn').textContent = `Turn: ${teamName(state.currentTeam)}`;
+      }
+    }
+
+    function resetScores() {
+      state.scoreA = 0;
+      state.scoreB = 0;
+      renderScores();
+    }
+
+    function resetBoard() {
+      state.used.clear();
+      closeModal();
+      buildBoard();
+    }
+
+    function qid(catIndex, qIndex) {
+      return `${catIndex}-${qIndex}`;
+    }
+
+    function buildBoard() {
+      boardEl.innerHTML = '';
+      gameData.forEach((category, catIndex) => {
+        const card = document.createElement('section');
+        card.className = 'category';
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.textContent = category.category;
+        card.appendChild(header);
+
+        const qs = document.createElement('div');
+        qs.className = 'questions';
+
+        category.questions.forEach((q, qIndex) => {
+          const button = document.createElement('button');
+          const id = qid(catIndex, qIndex);
+          button.className = 'qbtn';
+          button.textContent = q.points;
+          if (state.used.has(id)) {
+            button.classList.add('used');
+            button.disabled = true;
+          } else {
+            button.addEventListener('click', () => openQuestion(catIndex, qIndex));
+          }
+          qs.appendChild(button);
+        });
+
+        card.appendChild(qs);
+        boardEl.appendChild(card);
+      });
+    }
+
+    function openQuestion(catIndex, qIndex) {
+      const q = gameData[catIndex].questions[qIndex];
+      state.currentQuestion = { ...q, catIndex, qIndex, id: qid(catIndex, qIndex) };
+
+      document.getElementById('modalTitle').textContent = q.title;
+      document.getElementById('modalCategory').textContent = gameData[catIndex].category;
+      document.getElementById('modalPoints').textContent = `${q.points} points`;
+      document.getElementById('modalTurn').textContent = `Turn: ${teamName(state.currentTeam)}`;
+      document.getElementById('modalPrompt').textContent = q.prompt;
+      document.getElementById('modalCode').textContent = q.code;
+      document.getElementById('modalAskAloud').textContent = q.askAloud;
+      document.getElementById('modalHint').textContent = q.hint;
+      document.getElementById('modalAnswer').textContent = q.answer;
+      hintBoxEl.classList.remove('show');
+      answerBoxEl.classList.remove('show');
+      modalEl.classList.add('show');
+    }
+
+    function closeModal() {
+      modalEl.classList.remove('show');
+      state.currentQuestion = null;
+    }
+
+    function toggleReveal(type) {
+      if (type === 'hint') hintBoxEl.classList.toggle('show');
+      if (type === 'answer') answerBoxEl.classList.toggle('show');
+    }
+
+    function markClosed() {
+      if (!state.currentQuestion) return;
+      state.used.add(state.currentQuestion.id);
+      buildBoard();
+      closeModal();
+    }
+
+    function awardCurrent() {
+      if (!state.currentQuestion) return;
+      adjustScore(state.currentTeam, state.currentQuestion.points);
+    }
+
+    function awardSteal() {
+      if (!state.currentQuestion) return;
+      const other = state.currentTeam === 'A' ? 'B' : 'A';
+      adjustScore(other, Math.floor(state.currentQuestion.points / 2));
+    }
+
+    async function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    teamANameEl.addEventListener('input', renderScores);
+    teamBNameEl.addEventListener('input', renderScores);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalEl.classList.contains('show')) closeModal();
+    });
+
+    renderScores();
+    buildBoard();
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -257,7 +257,7 @@
       font-weight: 700;
     }
 
-    .ask-box, .reveal-box, .notes-box {
+    .ask-box, .reveal-box {
       background: rgba(26, 35, 64, 0.75);
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -265,7 +265,7 @@
       margin-bottom: 14px;
     }
 
-    .ask-box h3, .reveal-box h3, .notes-box h3 {
+    .ask-box h3, .reveal-box h3 {
       margin: 0 0 10px 0;
       font-size: 1rem;
       color: var(--accent);
@@ -306,7 +306,6 @@
       color: #edf1ff;
     }
 
-    .muted { color: var(--muted); }
     .tight { margin: 0; }
 
     @media (max-width: 1100px) {
@@ -324,16 +323,17 @@
 <body>
   <div class="container">
     <div class="topbar">
-      <section class="card team" id="teamABox">
+      <section class="card team">
         <div class="team-name-row">
           <h2>Equipe A</h2>
-          <input id="teamAName" value="Team A" aria-label="Team A name" />
+          <input id="teamAName" value="Equipe A" aria-label="Nome da Equipe A" />
         </div>
         <div class="score" id="scoreA">0</div>
         <div class="score-controls">
           <button onclick="adjustScore('A', 10)">+10</button>
           <button onclick="adjustScore('A', 20)">+20</button>
           <button onclick="adjustScore('A', 30)">+30</button>
+          <button onclick="adjustScore('A', 40)">+40</button>
           <button class="secondary" onclick="adjustScore('A', 2)">+2 explicação</button>
           <button class="bad" onclick="adjustScore('A', -5)">-5</button>
         </div>
@@ -341,41 +341,42 @@
 
       <section class="card center-panel">
         <h1>Duelo RISC-V</h1>
-        <p>Escolha uma categoria, deixe a equipe discutir e chame um aluno para responder.</p>
+        <p>Escolha uma categoria, abra a pergunta e revele a resposta quando quiser.</p>
         <div class="turn-badge" id="turnBadge">Vez atual: Equipe A</div>
         <div class="toolbar">
           <button onclick="switchTurn()">Trocar vez</button>
-          <button class="secondary" onclick="toggleTela cheia()">Fullscreen</button>
+          <button class="secondary" onclick="toggleFullscreen()">Tela cheia</button>
           <button class="warn" onclick="resetScores()">Zerar placar</button>
           <button class="bad" onclick="resetBoard()">Reiniciar quadro</button>
         </div>
       </section>
 
-      <section class="card team" id="teamBBox">
+      <section class="card team">
         <div class="team-name-row">
           <h2>Equipe B</h2>
-          <input id="teamBName" value="Team B" aria-label="Team B name" />
+          <input id="teamBName" value="Equipe B" aria-label="Nome da Equipe B" />
         </div>
         <div class="score" id="scoreB">0</div>
         <div class="score-controls">
           <button onclick="adjustScore('B', 10)">+10</button>
           <button onclick="adjustScore('B', 20)">+20</button>
           <button onclick="adjustScore('B', 30)">+30</button>
-          <button class="secondary" onclick="adjustScore('B', 2)">+2 explain</button>
+          <button onclick="adjustScore('B', 40)">+40</button>
+          <button class="secondary" onclick="adjustScore('B', 2)">+2 explicação</button>
           <button class="bad" onclick="adjustScore('B', -5)">-5</button>
         </div>
       </section>
     </div>
 
     <main class="board" id="board"></main>
-    <div class="legend">Agora há 24 perguntas no total, incluindo uma categoria mais difícil de C para Assembly.</div>
+    <div class="legend">24 perguntas no total, incluindo uma categoria mais difícil de C para Assembly.</div>
   </div>
 
   <div class="modal" id="questionModal">
     <div class="modal-card">
       <div class="modal-top">
         <div>
-          <h2 id="modalTitle">Question</h2>
+          <h2 id="modalTitle">Pergunta</h2>
           <div class="pill-row">
             <span class="pill" id="modalCategory"></span>
             <span class="pill" id="modalPoints"></span>
@@ -407,7 +408,7 @@
         <button class="good" onclick="toggleReveal('answer')">Mostrar / ocultar resposta</button>
         <button class="good" onclick="awardCurrent()">Pontuar equipe da vez</button>
         <button class="warn" onclick="awardSteal()">Pontuar roubo</button>
-        <button onclick="switchTurn()">Switch turn</button>
+        <button onclick="switchTurn()">Trocar vez</button>
         <button class="secondary" onclick="markClosed()">Marcar pergunta como usada</button>
       </div>
     </div>
@@ -939,7 +940,7 @@ Motivo:
     const answerBoxEl = document.getElementById('answerBox');
 
     function teamName(team) {
-      return team === 'A' ? teamANameEl.value || 'Team A' : teamBNameEl.value || 'Team B';
+      return team === 'A' ? (teamANameEl.value || 'Equipe A') : (teamBNameEl.value || 'Equipe B');
     }
 
     function updateTurnBadge() {

@@ -13,14 +13,9 @@
       --muted: #aeb8d9;
       --border: #2c3967;
       --accent: #7dd3fc;
-      --good: #86efac;
-      --warn: #fcd34d;
-      --bad: #fca5a5;
       --used: #0f172a;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       background: linear-gradient(180deg, #0b1020 0%, #0d1328 100%);
@@ -28,20 +23,8 @@
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       min-height: 100vh;
     }
-
-    .container {
-      max-width: 1450px;
-      margin: 0 auto;
-      padding: 18px;
-    }
-
-    .topbar {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr 1.2fr;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
+    .container { max-width: 1450px; margin: 0 auto; padding: 18px; }
+    .topbar { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 16px; margin-bottom: 18px; }
     .card {
       background: rgba(19, 26, 49, 0.96);
       border: 1px solid var(--border);
@@ -49,232 +32,74 @@
       padding: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.28);
     }
-
-    .team-name-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .team-name-row h2,
-    .center-panel h1 {
-      margin: 0;
-      line-height: 1.1;
-    }
-
+    .team-name-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .team-name-row h2, .center-panel h1 { margin: 0; line-height: 1.1; }
     input {
-      width: 100%;
-      background: var(--panel2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 1rem;
+      width: 100%; background: var(--panel2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 1rem;
     }
-
-    .score {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .controls,
-    .toolbar,
-    .modal-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .center-panel {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .center-panel p {
-      margin: 0;
-      color: var(--muted);
-    }
-
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 10px; }
+    .controls, .toolbar, .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .center-panel { text-align: center; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+    .center-panel p { margin: 0; color: var(--muted); }
     .turn-badge {
-      display: inline-block;
-      margin: 0 auto;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(125, 211, 252, 0.12);
-      font-weight: 700;
+      display: inline-block; margin: 0 auto; padding: 10px 14px; border-radius: 999px;
+      border: 1px solid var(--border); background: rgba(125, 211, 252, 0.12); font-weight: 700;
     }
-
     button {
-      border: 1px solid #44558d;
-      border-radius: 12px;
-      padding: 10px 14px;
-      cursor: pointer;
-      color: var(--text);
-      background: linear-gradient(180deg, #25345f, #1a2445);
-      font-weight: 700;
+      border: 1px solid #44558d; border-radius: 12px; padding: 10px 14px; cursor: pointer;
+      color: var(--text); background: linear-gradient(180deg, #25345f, #1a2445); font-weight: 700;
     }
-
     button.secondary { background: #17203c; }
     button.good { background: linear-gradient(180deg, #1d5e3c, #15442b); border-color: #2d8b58; }
     button.warn { background: linear-gradient(180deg, #6a5313, #4f3d0d); border-color: #b58b1f; }
     button.bad { background: linear-gradient(180deg, #6b2626, #4b1919); border-color: #b14a4a; }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
+    .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .category {
-      background: rgba(19, 26, 49, 0.94);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      min-height: 470px;
-      display: flex;
-      flex-direction: column;
+      background: rgba(19, 26, 49, 0.94); border: 1px solid var(--border); border-radius: 18px;
+      overflow: hidden; min-height: 470px; display: flex; flex-direction: column;
     }
-
     .category-header {
-      min-height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 12px;
-      background: rgba(125, 211, 252, 0.10);
-      border-bottom: 1px solid var(--border);
-      font-size: 1.05rem;
-      font-weight: 800;
+      min-height: 82px; display: flex; align-items: center; justify-content: center; text-align: center;
+      padding: 12px; background: rgba(125, 211, 252, 0.10); border-bottom: 1px solid var(--border);
+      font-size: 1.05rem; font-weight: 800;
     }
-
-    .questions {
-      padding: 14px;
-      display: grid;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .qbtn {
-      min-height: 80px;
-      font-size: 1.7rem;
-      font-weight: 900;
-    }
-
-    .qbtn.used {
-      background: var(--used);
-      color: #64729a;
-      border-color: #253256;
-      cursor: not-allowed;
-    }
-
-    .legend {
-      margin-top: 16px;
-      text-align: center;
-      color: var(--muted);
-    }
-
+    .questions { padding: 14px; display: grid; gap: 12px; flex: 1; }
+    .qbtn { min-height: 80px; font-size: 1.7rem; font-weight: 900; }
+    .qbtn.used { background: var(--used); color: #64729a; border-color: #253256; cursor: not-allowed; }
+    .legend { margin-top: 16px; text-align: center; color: var(--muted); }
     .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(4, 8, 20, 0.80);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 10;
+      position: fixed; inset: 0; background: rgba(4, 8, 20, 0.80); display: none;
+      align-items: center; justify-content: center; padding: 20px; z-index: 10;
     }
-
     .modal.show { display: flex; }
-
     .modal-card {
-      width: min(1100px, 100%);
-      max-height: 92vh;
-      overflow: auto;
-      background: #0f1730;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 22px;
+      width: min(1100px, 100%); max-height: 92vh; overflow: auto; background: #0f1730;
+      border: 1px solid var(--border); border-radius: 22px; padding: 22px;
     }
-
-    .modal-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
-
-    .modal-top h2 {
-      margin: 0 0 8px 0;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    .modal-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+    .modal-top h2 { margin: 0 0 8px 0; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .pill {
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(125, 211, 252, 0.28);
-      background: rgba(125, 211, 252, 0.12);
-      color: var(--accent);
-      font-size: 0.92rem;
-      font-weight: 700;
+      padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(125, 211, 252, 0.28);
+      background: rgba(125, 211, 252, 0.12); color: var(--accent); font-size: 0.92rem; font-weight: 700;
     }
-
     .box {
-      background: rgba(26, 35, 64, 0.80);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 14px;
+      background: rgba(26, 35, 64, 0.80); border: 1px solid var(--border); border-radius: 16px;
+      padding: 14px; margin-bottom: 14px;
     }
-
-    .box h3 {
-      margin: 0 0 8px 0;
-      color: var(--accent);
-      font-size: 1rem;
-    }
-
+    .box h3 { margin: 0 0 8px 0; color: var(--accent); font-size: 1rem; }
     pre {
-      margin: 0;
-      padding: 16px;
-      background: #081022;
-      border: 1px solid #223158;
-      border-radius: 16px;
-      overflow: auto;
-      font-size: 1rem;
-      line-height: 1.45;
-      color: #e8eeff;
+      margin: 0; padding: 16px; background: #081022; border: 1px solid #223158; border-radius: 16px;
+      overflow: auto; font-size: 1rem; line-height: 1.45; color: #e8eeff;
     }
-
-    .reveal {
-      display: none;
-    }
-
-    .reveal.show {
-      display: block;
-    }
-
-    .answer-text {
-      white-space: pre-wrap;
-      line-height: 1.5;
-    }
-
+    .reveal { display: none; }
+    .reveal.show { display: block; }
+    .answer-text { white-space: pre-wrap; line-height: 1.5; }
     @media (max-width: 1100px) {
       .topbar { grid-template-columns: 1fr; }
       .board { grid-template-columns: 1fr 1fr; }
     }
-
     @media (max-width: 700px) {
       .board { grid-template-columns: 1fr; }
       .score { font-size: 2.4rem; }
@@ -380,11 +205,7 @@
       {
         category: "Fluxo de Controle",
         questions: [
-          {
-            points: 10,
-            title: "Qual caminho é executado?",
-            prompt: "Trace o fluxo de controle. Quais instruções são puladas e qual é o valor final de t2?",
-            code: `li t0, 7
+          { points: 10, title: "Qual caminho é executado?", prompt: "Trace o fluxo de controle. Quais instruções são puladas e qual é o valor final de t2?", code: "li t0, 7
 li t1, 10
 blt t0, t1, L1
 addi t2, x0, 1
@@ -394,9 +215,7 @@ L1:
 addi t2, x0, 2
 
 L2:
-addi t2, t2, 3`,
-            hint: "Primeiro decida se o branch é tomado. Só depois calcule t2.",
-            answer: "Como 7 < 10, o branch para L1 é tomado.
+addi t2, t2, 3", hint: "Primeiro decida se o branch é tomado. Só depois calcule t2.", answer: "Como 7 < 10, o branch para L1 é tomado.
 
 Instruções puladas:
 - addi t2, x0, 1
@@ -405,30 +224,18 @@ Instruções puladas:
 Caminho executado:
 blt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3
 
-Valor final: t2 = 5."
-          },
-          {
-            points: 20,
-            title: "Armadilha de contagem do laço",
-            prompt: "Esse laço termina? Quantas vezes o corpo do laço é executado?",
-            code: `li t0, 3
+Valor final: t2 = 5." },
+          { points: 20, title: "Armadilha de contagem do laço", prompt: "Esse laço termina? Quantas vezes o corpo do laço é executado?", code: "li t0, 3
 
 loop:
   addi t0, t0, -1
-  bge t0, x0, loop`,
-            hint: "Acompanhe t0 depois do decremento.",
-            answer: "Sim, ele termina.
+  bge t0, x0, loop", hint: "Acompanhe t0 depois do decremento.", answer: "Sim, ele termina.
 
 Valores de t0 depois de cada decremento: 2, 1, 0, -1.
 O branch repete enquanto t0 >= 0.
 
-Logo, o corpo executa 4 vezes."
-          },
-          {
-            points: 30,
-            title: "Que construção de alto nível é essa?",
-            prompt: "Explique o que esse trecho calcula e a que tipo de laço ele corresponde.",
-            code: `li t0, 0
+Logo, o corpo executa 4 vezes." },
+          { points: 30, title: "Que construção de alto nível é essa?", prompt: "Explique o que esse trecho calcula e a que tipo de laço ele corresponde.", code: "li t0, 0
 li t1, 0
 
 loop:
@@ -437,20 +244,13 @@ loop:
   addi t0, t0, 1
   j loop
 
-end:`,
-            hint: "t0 é contador e t1 é acumulador.",
-            answer: "Ele soma os inteiros de 0 até a0 - 1.
+end:", hint: "t0 é contador e t1 é acumulador.", answer: "Ele soma os inteiros de 0 até a0 - 1.
 
 Equivalente a:
 for (i = 0; i < a0; i++) sum += i;
 
-No final, t1 contém 0 + 1 + 2 + ... + (a0 - 1)."
-          },
-          {
-            points: 40,
-            title: "Branches aninhados",
-            prompt: "Suponha que a0 contém x e a1 contém y. Que valor vai para t0 em cada caso?",
-            code: `blt a0, a1, less
+No final, t1 contém 0 + 1 + 2 + ... + (a0 - 1)." },
+          { points: 40, title: "Branches aninhados", prompt: "Suponha que a0 contém x e a1 contém y. Que valor vai para t0 em cada caso?", code: "blt a0, a1, less
 li t0, 0
 j end
 
@@ -462,22 +262,15 @@ j end
 zero_case:
 li t0, 2
 
-end:`,
-            hint: "Separe os casos x >= y, x < y e x == 0.",
-            answer: "Se x >= y, t0 = 0.
+end:", hint: "Separe os casos x >= y, x < y e x == 0.", answer: "Se x >= y, t0 = 0.
 Se x < y e x != 0, t0 = 1.
-Se x < y e x == 0, t0 = 2."
-          }
+Se x < y e x == 0, t0 = 2." }
         ]
       },
       {
         category: "Memória",
         questions: [
-          {
-            points: 10,
-            title: "O que muda na memória?",
-            prompt: "Suponha que arr começa como 10, 20, 30, 40. Quais valores são carregados e qual é o vetor final?",
-            code: `.data
+          { points: 10, title: "O que muda na memória?", prompt: "Suponha que arr começa como 10, 20, 30, 40. Quais valores são carregados e qual é o vetor final?", code: ".data
 arr: .word 10, 20, 30, 40
 
 .text
@@ -485,42 +278,21 @@ la t0, arr
 lw t1, 4(t0)
 lw t2, 8(t0)
 add t3, t1, t2
-sw t3, 0(t0)`,
-            hint: "Offsets estão em bytes.",
-            answer: "t1 = 20 e t2 = 30.
+sw t3, 0(t0)", hint: "Offsets estão em bytes.", answer: "t1 = 20 e t2 = 30.
 Depois, t3 = 50 e 50 é escrito em arr[0].
 
-Vetor final: 50, 20, 30, 40."
-          },
-          {
-            points: 20,
-            title: "Qual elemento do vetor é acessado?",
-            prompt: "Qual elemento é carregado, e por que há um shift de 2?",
-            code: `la t0, arr
+Vetor final: 50, 20, 30, 40." },
+          { points: 20, title: "Qual elemento do vetor é acessado?", prompt: "Qual elemento é carregado, e por que há um shift de 2?", code: "la t0, arr
 li t1, 3
 slli t1, t1, 2
 add t2, t0, t1
-lw t3, 0(t2)`,
-            hint: "Words ocupam 4 bytes.",
-            answer: "O código carrega arr[3].
-O shift por 2 multiplica o índice por 4 para formar o offset em bytes."
-          },
-          {
-            points: 30,
-            title: "lb vs lbu",
-            prompt: "A memória no endereço 0x1000 contém o byte 0xFF. Qual é a diferença entre t1 e t2?",
-            code: `li t0, 0x1000
+lw t3, 0(t2)", hint: "Words ocupam 4 bytes.", answer: "O código carrega arr[3].
+O shift por 2 multiplica o índice por 4 para formar o offset em bytes." },
+          { points: 30, title: "lb vs lbu", prompt: "A memória no endereço 0x1000 contém o byte 0xFF. Qual é a diferença entre t1 e t2?", code: "li t0, 0x1000
 lb  t1, 0(t0)
-lbu t2, 0(t0)`,
-            hint: "Pense em 0xFF como valor assinado de 8 bits.",
-            answer: "lb faz extensão de sinal, então t1 = -1.
-lbu faz extensão com zeros, então t2 = 255."
-          },
-          {
-            points: 40,
-            title: "Percorrendo ponteiro com stores",
-            prompt: "Suponha que arr inicialmente contém 4, 7, 9. Qual é o vetor final após a execução?",
-            code: `la t0, arr
+lbu t2, 0(t0)", hint: "Pense em 0xFF como valor assinado de 8 bits.", answer: "lb faz extensão de sinal, então t1 = -1.
+lbu faz extensão com zeros, então t2 = 255." },
+          { points: 40, title: "Percorrendo ponteiro com stores", prompt: "Suponha que arr inicialmente contém 4, 7, 9. Qual é o vetor final após a execução?", code: "la t0, arr
 li t1, 3
 
 loop:
@@ -529,76 +301,41 @@ loop:
   sw t2, 0(t0)
   addi t0, t0, 4
   addi t1, t1, -1
-  bnez t1, loop`,
-            hint: "Cada iteração decrementa um elemento e grava de volta.",
-            answer: "Cada elemento é decrementado uma vez.
+  bnez t1, loop", hint: "Cada iteração decrementa um elemento e grava de volta.", answer: "Cada elemento é decrementado uma vez.
 
 Inicial: 4, 7, 9
-Final: 3, 6, 8."
-          }
+Final: 3, 6, 8." }
         ]
       },
       {
         category: "Construção de Endereços",
         questions: [
-          {
-            points: 10,
-            title: "Complete o endereço",
-            prompt: "Qual instrução entra no espaço em branco, e qual valor termina em t0?",
-            code: `lui t0, 0x12345
-_____ t0, t0, 0x678`,
-            hint: "lui monta a parte de cima.",
-            answer: "A instrução é addi.
+          { points: 10, title: "Complete o endereço", prompt: "Qual instrução entra no espaço em branco, e qual valor termina em t0?", code: "lui t0, 0x12345
+_____ t0, t0, 0x678", hint: "lui monta a parte de cima.", answer: "A instrução é addi.
 
-Resultado: t0 = 0x12345678."
-          },
-          {
-            points: 20,
-            title: "Pensando em PC-relative",
-            prompt: "Suponha que essa instrução auipc está no endereço 0x00010000. Qual valor termina em t0?",
-            code: `auipc t0, 0x1
-addi  t0, t0, 16`,
-            hint: "auipc soma PC com imediato deslocado 12 bits.",
-            answer: "Depois de auipc: t0 = 0x00011000.
-Depois de addi 16: t0 = 0x00011010."
-          },
-          {
-            points: 30,
-            title: "la vs expansão manual",
-            prompt: "A pseudoinstrução la carrega um endereço. Qual par de instruções reais costuma ser usado em estilo position-independent, e por quê?",
-            code: `la t0, label`,
-            hint: "Pense em relativo ao PC.",
-            answer: "Uma expansão comum usa auipc + addi.
+Resultado: t0 = 0x12345678." },
+          { points: 20, title: "Pensando em PC-relative", prompt: "Suponha que essa instrução auipc está no endereço 0x00010000. Qual valor termina em t0?", code: "auipc t0, 0x1
+addi  t0, t0, 16", hint: "auipc soma PC com imediato deslocado 12 bits.", answer: "Depois de auipc: t0 = 0x00011000.
+Depois de addi 16: t0 = 0x00011010." },
+          { points: 30, title: "la vs expansão manual", prompt: "A pseudoinstrução la carrega um endereço. Qual par de instruções reais costuma ser usado em estilo position-independent, e por quê?", code: "la t0, label", hint: "Pense em relativo ao PC.", answer: "Uma expansão comum usa auipc + addi.
 
-A ideia é formar um endereço relativo ao PC, o que ajuda em código position-independent."
-          },
-          {
-            points: 40,
-            title: "Absoluto vs relativo ao PC",
-            prompt: "Compare usar lui/addi para um endereço fixo com usar auipc/addi para um rótulo próximo. Quando o segundo é especialmente útil?",
-            code: `# estilo 1
+A ideia é formar um endereço relativo ao PC, o que ajuda em código position-independent." },
+          { points: 40, title: "Absoluto vs relativo ao PC", prompt: "Compare usar lui/addi para um endereço fixo com usar auipc/addi para um rótulo próximo. Quando o segundo é especialmente útil?", code: "# estilo 1
 lui   t0, UPPER
 addi  t0, t0, LOWER
 
 # estilo 2
 auipc t0, OFFHI
-addi  t0, t0, OFFLO`,
-            hint: "Um estilo é fixo; o outro acompanha o PC.",
-            answer: "lui/addi constrói um valor diretamente.
+addi  t0, t0, OFFLO", hint: "Um estilo é fixo; o outro acompanha o PC.", answer: "lui/addi constrói um valor diretamente.
 auipc/addi constrói um endereço relativo ao PC.
 
-O segundo é especialmente útil em código position-independent."
-          }
+O segundo é especialmente útil em código position-independent." }
         ]
       },
       {
         category: "Caça-Bugs",
         questions: [
-          {
-            points: 10,
-            title: "Store faltando",
-            prompt: "O programador quer incrementar cada elemento de um vetor. Por que isso falha?",
-            code: `la t0, arr
+          { points: 10, title: "Store faltando", prompt: "O programador quer incrementar cada elemento de um vetor. Por que isso falha?", code: "la t0, arr
 li t1, 3
 
 loop:
@@ -606,76 +343,41 @@ loop:
   addi t2, t2, 1
   addi t0, t0, 4
   addi t1, t1, -1
-  bnez t1, loop`,
-            hint: "Um registrador mudou, mas a memória não.",
-            answer: "Falta gravar o valor atualizado de volta na memória.
+  bnez t1, loop", hint: "Um registrador mudou, mas a memória não.", answer: "Falta gravar o valor atualizado de volta na memória.
 
-A instrução faltando é sw t2, 0(t0)."
-          },
-          {
-            points: 20,
-            title: "Escala de índice errada",
-            prompt: "Se o programador queria arr[2], o que está errado aqui?",
-            code: `la t0, arr
+A instrução faltando é sw t2, 0(t0)." },
+          { points: 20, title: "Escala de índice errada", prompt: "Se o programador queria arr[2], o que está errado aqui?", code: "la t0, arr
 li t1, 2
 add t2, t0, t1
-lw t3, 0(t2)`,
-            hint: "Índice não é offset em bytes.",
-            answer: "O índice não foi multiplicado por 4.
+lw t3, 0(t2)", hint: "Índice não é offset em bytes.", answer: "O índice não foi multiplicado por 4.
 
-O código anda 2 bytes, e não 2 words."
-          },
-          {
-            points: 30,
-            title: "Dois bugs",
-            prompt: "Esse laço deveria somar 10 a cada elemento do vetor. Encontre os dois bugs.",
-            code: `la t0, arr
+O código anda 2 bytes, e não 2 words." },
+          { points: 30, title: "Dois bugs", prompt: "Esse laço deveria somar 10 a cada elemento do vetor. Encontre os dois bugs.", code: "la t0, arr
 li t1, 4
 
 loop:
   lw t2, 0(t0)
   addi t2, t2, 10
   addi t0, t0, 4
-  bnez t1, loop`,
-            hint: "Pense em memória e em avanço do laço.",
-            answer: "Bug 1: falta store.
-Bug 2: t1 nunca é decrementado, então o laço não termina."
-          },
-          {
-            points: 40,
-            title: "Bug de comparação com sinal",
-            prompt: "O programador afirma que isso testa se um elemento do vetor é maior que 200 como byte sem sinal. Por que está errado?",
-            code: `la t0, arr
+  bnez t1, loop", hint: "Pense em memória e em avanço do laço.", answer: "Bug 1: falta store.
+Bug 2: t1 nunca é decrementado, então o laço não termina." },
+          { points: 40, title: "Bug de comparação com sinal", prompt: "O programador afirma que isso testa se um elemento do vetor é maior que 200 como byte sem sinal. Por que está errado?", code: "la t0, arr
 lb t1, 0(t0)
 li t2, 200
-bgt t1, t2, big`,
-            hint: "A pista principal é a expressão sem sinal.",
-            answer: "O bug principal é usar lb em vez de lbu.
+bgt t1, t2, big", hint: "A pista principal é a expressão sem sinal.", answer: "O bug principal é usar lb em vez de lbu.
 
-Com lb, bytes com bit alto ligado viram valores negativos por extensão de sinal."
-          }
+Com lb, bytes com bit alto ligado viram valores negativos por extensão de sinal." }
         ]
       },
       {
         category: "Desafio Misto",
         questions: [
-          {
-            points: 10,
-            title: "Que pseudoinstrução é essa?",
-            prompt: "Diga a pseudoinstrução equivalente a cada forma real abaixo.",
-            code: `addi t0, t1, 0
+          { points: 10, title: "Que pseudoinstrução é essa?", prompt: "Diga a pseudoinstrução equivalente a cada forma real abaixo.", code: "addi t0, t1, 0
 jal  x0, label
-jalr x0, 0(ra)`,
-            hint: "São três pseudoinstruções muito comuns.",
-            answer: "mv t0, t1
+jalr x0, 0(ra)", hint: "São três pseudoinstruções muito comuns.", answer: "mv t0, t1
 j label
-ret"
-          },
-          {
-            points: 20,
-            title: "O que esse laço conta?",
-            prompt: "Suponha que arr contém 5 inteiros. Que quantidade fica armazenada em t2 no final?",
-            code: `la t0, arr
+ret" },
+          { points: 20, title: "O que esse laço conta?", prompt: "Suponha que arr contém 5 inteiros. Que quantidade fica armazenada em t2 no final?", code: "la t0, arr
 li t1, 5
 li t2, 0
 
@@ -690,15 +392,8 @@ neg:
 next:
   addi t0, t0, 4
   addi t1, t1, -1
-  bnez t1, loop`,
-            hint: "Só um tipo de elemento faz t2 aumentar.",
-            answer: "Ele conta quantos elementos negativos existem no vetor."
-          },
-          {
-            points: 30,
-            title: "Chefão final",
-            prompt: "O que esse código faz, e qual erro sutil impede que ele calcule a média verdadeira de 6 números?",
-            code: `la t0, arr
+  bnez t1, loop", hint: "Só um tipo de elemento faz t2 aumentar.", answer: "Ele conta quantos elementos negativos existem no vetor." },
+          { points: 30, title: "Chefão final", prompt: "O que esse código faz, e qual erro sutil impede que ele calcule a média verdadeira de 6 números?", code: "la t0, arr
 li t1, 6
 li t2, 0
 
@@ -711,17 +406,10 @@ loop:
   j loop
 
 end:
-srai a0, t2, 1`,
-            hint: "O problema está no fim.",
-            answer: "O laço soma 6 elementos corretamente.
+srai a0, t2, 1", hint: "O problema está no fim.", answer: "O laço soma 6 elementos corretamente.
 
-Mas no final divide por 2, e não por 6. Então não calcula a média verdadeira."
-          },
-          {
-            points: 40,
-            title: "Reconstrua a instrução faltando",
-            prompt: "Se o programador quer que t2 termine com o maior entre t0 e t1, que instruções entram na região em branco?",
-            code: `# queremos t2 = max(t0, t1)
+Mas no final divide por 2, e não por 6. Então não calcula a média verdadeira." },
+          { points: 40, title: "Reconstrua a instrução faltando", prompt: "Se o programador quer que t2 termine com o maior entre t0 e t1, que instruções entram na região em branco?", code: "# queremos t2 = max(t0, t1)
 blt t0, t1, use_t1
 _____
 j end
@@ -729,9 +417,7 @@ j end
 use_t1:
 _____
 
-end:`,
-            hint: "Um caminho move t0. O outro move t1.",
-            answer: "Uma solução é:
+end:", hint: "Um caminho move t0. O outro move t1.", answer: "Uma solução é:
 
 mv t2, t0
 ...
@@ -742,47 +428,26 @@ blt t0, t1, use_t1
 mv t2, t0
 j end
 use_t1:
-mv t2, t1"
-          }
+mv t2, t1" }
         ]
       },
       {
         category: "C para Assembly",
         questions: [
-          {
-            points: 10,
-            title: "Traduza uma atribuição simples",
-            prompt: "Traduza para RISC-V supondo x em s0, y em s1 e z em s2: z = x + y;",
-            code: `// C
-z = x + y;`,
-            hint: "Todas as variáveis já estão em registradores.",
-            answer: "add s2, s0, s1"
-          },
-          {
-            points: 20,
-            title: "Traduza um if",
-            prompt: "Traduza para RISC-V, supondo x em s0 e y em s1: if (x < y) x = x + 1;",
-            code: `// C
+          { points: 10, title: "Traduza uma atribuição simples", prompt: "Traduza para RISC-V supondo x em s0, y em s1 e z em s2: z = x + y;", code: "// C
+z = x + y;", hint: "Todas as variáveis já estão em registradores.", answer: "add s2, s0, s1" },
+          { points: 20, title: "Traduza um if", prompt: "Traduza para RISC-V, supondo x em s0 e y em s1: if (x < y) x = x + 1;", code: "// C
 if (x < y)
-  x = x + 1;`,
-            hint: "Desvie do corpo quando a condição for falsa.",
-            answer: "Uma solução correta é:
+  x = x + 1;", hint: "Desvie do corpo quando a condição for falsa.", answer: "Uma solução correta é:
 
 bge s0, s1, end
 addi s0, s0, 1
-end:"
-          },
-          {
-            points: 30,
-            title: "Traduza um laço de contagem",
-            prompt: "Traduza para RISC-V supondo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }",
-            code: `// C
+end:" },
+          { points: 30, title: "Traduza um laço de contagem", prompt: "Traduza para RISC-V supondo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }", code: "// C
 while (i < 10) {
   sum += i;
   i++;
-}`,
-            hint: "Um laço precisa de teste, corpo e salto de volta.",
-            answer: "Uma solução correta é:
+}", hint: "Um laço precisa de teste, corpo e salto de volta.", answer: "Uma solução correta é:
 
 loop:
   li t0, 10
@@ -790,33 +455,18 @@ loop:
   add s1, s1, s0
   addi s0, s0, 1
   j loop
-end:"
-          },
-          {
-            points: 40,
-            title: "Traduza acesso a vetor",
-            prompt: "Traduza para RISC-V supondo endereço base de arr em s0, i em s1 e x em s2: x = arr[i];",
-            code: `// C
-x = arr[i];`,
-            hint: "Words ocupam 4 bytes.",
-            answer: "Uma solução correta é:
+end:" },
+          { points: 40, title: "Traduza acesso a vetor", prompt: "Traduza para RISC-V supondo endereço base de arr em s0, i em s1 e x em s2: x = arr[i];", code: "// C
+x = arr[i];", hint: "Words ocupam 4 bytes.", answer: "Uma solução correta é:
 
 slli t0, s1, 2
 add  t0, s0, t0
-lw   s2, 0(t0)"
-          }
+lw   s2, 0(t0)" }
         ]
       }
     ];
 
-    const state = {
-      scoreA: 0,
-      scoreB: 0,
-      currentTeam: "A",
-      currentQuestion: null,
-      used: new Set()
-    };
-
+    const state = { scoreA: 0, scoreB: 0, currentTeam: "A", currentQuestion: null, used: new Set() };
     const boardEl = document.getElementById("board");
     const scoreAEl = document.getElementById("scoreA");
     const scoreBEl = document.getElementById("scoreB");
@@ -830,79 +480,49 @@ lw   s2, 0(t0)"
     function teamName(team) {
       return team === "A" ? (teamANameEl.value || "Equipe A") : (teamBNameEl.value || "Equipe B");
     }
-
-    function updateTurnBadge() {
-      turnBadgeEl.textContent = "Vez atual: " + teamName(state.currentTeam);
-    }
-
+    function updateTurnBadge() { turnBadgeEl.textContent = "Vez atual: " + teamName(state.currentTeam); }
     function renderScores() {
       scoreAEl.textContent = String(state.scoreA);
       scoreBEl.textContent = String(state.scoreB);
       updateTurnBadge();
     }
-
     function adjustScore(team, delta) {
-      if (team === "A") state.scoreA += delta;
-      else state.scoreB += delta;
+      if (team === "A") state.scoreA += delta; else state.scoreB += delta;
       renderScores();
     }
-
     function switchTurn() {
       state.currentTeam = state.currentTeam === "A" ? "B" : "A";
       renderScores();
-      if (state.currentQuestion) {
-        document.getElementById("modalTurn").textContent = "Vez: " + teamName(state.currentTeam);
-      }
+      if (state.currentQuestion) document.getElementById("modalTurn").textContent = "Vez: " + teamName(state.currentTeam);
     }
-
-    function resetScores() {
-      state.scoreA = 0;
-      state.scoreB = 0;
-      renderScores();
-    }
-
-    function resetBoard() {
-      state.used.clear();
-      closeModal();
-      buildBoard();
-    }
-
-    function qid(catIndex, qIndex) {
-      return String(catIndex) + "-" + String(qIndex);
-    }
+    function resetScores() { state.scoreA = 0; state.scoreB = 0; renderScores(); }
+    function resetBoard() { state.used.clear(); closeModal(); buildBoard(); }
+    function qid(catIndex, qIndex) { return String(catIndex) + "-" + String(qIndex); }
 
     function buildBoard() {
       boardEl.innerHTML = "";
       gameData.forEach(function(category, catIndex) {
         const card = document.createElement("section");
         card.className = "category";
-
         const header = document.createElement("div");
         header.className = "category-header";
         header.textContent = category.category;
         card.appendChild(header);
-
         const qs = document.createElement("div");
         qs.className = "questions";
-
         category.questions.forEach(function(q, qIndex) {
           const btn = document.createElement("button");
           const id = qid(catIndex, qIndex);
           btn.className = "qbtn";
           btn.textContent = String(q.points);
-
           if (state.used.has(id)) {
             btn.classList.add("used");
             btn.disabled = true;
           } else {
-            btn.addEventListener("click", function() {
-              openQuestion(catIndex, qIndex);
-            });
+            btn.addEventListener("click", function() { openQuestion(catIndex, qIndex); });
           }
-
           qs.appendChild(btn);
         });
-
         card.appendChild(qs);
         boardEl.appendChild(card);
       });
@@ -910,13 +530,7 @@ lw   s2, 0(t0)"
 
     function openQuestion(catIndex, qIndex) {
       const q = gameData[catIndex].questions[qIndex];
-      state.currentQuestion = {
-        id: qid(catIndex, qIndex),
-        catIndex: catIndex,
-        qIndex: qIndex,
-        points: q.points
-      };
-
+      state.currentQuestion = { id: qid(catIndex, qIndex), points: q.points };
       document.getElementById("modalTitle").textContent = q.title;
       document.getElementById("modalCategory").textContent = gameData[catIndex].category;
       document.getElementById("modalPoints").textContent = String(q.points) + " pontos";
@@ -929,55 +543,38 @@ lw   s2, 0(t0)"
       answerBoxEl.classList.remove("show");
       modalEl.classList.add("show");
     }
-
-    function closeModal() {
-      modalEl.classList.remove("show");
-      state.currentQuestion = null;
-    }
-
+    function closeModal() { modalEl.classList.remove("show"); state.currentQuestion = null; }
     function toggleReveal(which) {
       if (which === "hint") hintBoxEl.classList.toggle("show");
       if (which === "answer") answerBoxEl.classList.toggle("show");
     }
-
     function markClosed() {
       if (!state.currentQuestion) return;
       state.used.add(state.currentQuestion.id);
       buildBoard();
       closeModal();
     }
-
     function awardCurrent() {
       if (!state.currentQuestion) return;
       adjustScore(state.currentTeam, state.currentQuestion.points);
     }
-
     function awardSteal() {
       if (!state.currentQuestion) return;
       const other = state.currentTeam === "A" ? "B" : "A";
       adjustScore(other, Math.floor(state.currentQuestion.points / 2));
     }
-
     async function toggleFullscreen() {
       if (!document.fullscreenElement) {
-        try {
-          await document.documentElement.requestFullscreen();
-        } catch (e) {}
+        try { await document.documentElement.requestFullscreen(); } catch (e) {}
       } else {
-        try {
-          await document.exitFullscreen();
-        } catch (e) {}
+        try { await document.exitFullscreen(); } catch (e) {}
       }
     }
-
     teamANameEl.addEventListener("input", renderScores);
     teamBNameEl.addEventListener("input", renderScores);
     document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape" && modalEl.classList.contains("show")) {
-        closeModal();
-      }
+      if (e.key === "Escape" && modalEl.classList.contains("show")) closeModal();
     });
-
     renderScores();
     buildBoard();
   </script>

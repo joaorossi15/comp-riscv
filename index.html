@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RISC-V Team Quiz</title>
+  <title>Quiz em Equipes — RISC-V</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -145,7 +145,7 @@
 
     .board {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 14px;
     }
 
@@ -154,7 +154,7 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       overflow: hidden;
-      min-height: 390px;
+      min-height: 520px;
       display: flex;
       flex-direction: column;
     }
@@ -174,7 +174,8 @@
 
     .questions {
       display: grid;
-      grid-template-rows: repeat(3, 1fr);
+      grid-template-columns: 1fr;
+      grid-auto-rows: 1fr;
       gap: 12px;
       padding: 14px;
       flex: 1;
@@ -325,7 +326,7 @@
     <div class="topbar">
       <section class="card team" id="teamABox">
         <div class="team-name-row">
-          <h2>Team A</h2>
+          <h2>Equipe A</h2>
           <input id="teamAName" value="Team A" aria-label="Team A name" />
         </div>
         <div class="score" id="scoreA">0</div>
@@ -333,26 +334,26 @@
           <button onclick="adjustScore('A', 10)">+10</button>
           <button onclick="adjustScore('A', 20)">+20</button>
           <button onclick="adjustScore('A', 30)">+30</button>
-          <button class="secondary" onclick="adjustScore('A', 2)">+2 explain</button>
+          <button class="secondary" onclick="adjustScore('A', 2)">+2 explicação</button>
           <button class="bad" onclick="adjustScore('A', -5)">-5</button>
         </div>
       </section>
 
       <section class="card center-panel">
-        <h1>RISC-V Faceoff</h1>
-        <p>Choose a category, let the team discuss, call one student to answer, and allow a steal if needed.</p>
-        <div class="turn-badge" id="turnBadge">Current turn: Team A</div>
+        <h1>Duelo RISC-V</h1>
+        <p>Escolha uma categoria, deixe a equipe discutir e chame um aluno para responder.</p>
+        <div class="turn-badge" id="turnBadge">Vez atual: Equipe A</div>
         <div class="toolbar">
-          <button onclick="switchTurn()">Switch turn</button>
-          <button class="secondary" onclick="toggleFullscreen()">Fullscreen</button>
-          <button class="warn" onclick="resetScores()">Reset scores</button>
-          <button class="bad" onclick="resetBoard()">Reset board</button>
+          <button onclick="switchTurn()">Trocar vez</button>
+          <button class="secondary" onclick="toggleTela cheia()">Fullscreen</button>
+          <button class="warn" onclick="resetScores()">Zerar placar</button>
+          <button class="bad" onclick="resetBoard()">Reiniciar quadro</button>
         </div>
       </section>
 
       <section class="card team" id="teamBBox">
         <div class="team-name-row">
-          <h2>Team B</h2>
+          <h2>Equipe B</h2>
           <input id="teamBName" value="Team B" aria-label="Team B name" />
         </div>
         <div class="score" id="scoreB">0</div>
@@ -367,7 +368,7 @@
     </div>
 
     <main class="board" id="board"></main>
-    <div class="legend">Default points: correct answer = face value, steal = half value, good explanation bonus = +2. Edit scores manually if you want different rules.</div>
+    <div class="legend">Agora há 24 perguntas no total, incluindo uma categoria mais difícil de C para Assembly.</div>
   </div>
 
   <div class="modal" id="questionModal">
@@ -381,38 +382,33 @@
             <span class="pill" id="modalTurn"></span>
           </div>
         </div>
-        <button class="secondary" onclick="closeModal()">Close</button>
+        <button class="secondary" onclick="closeModal()">Fechar</button>
       </div>
 
       <section class="ask-box">
-        <h3>Prompt</h3>
+        <h3>Pergunta</h3>
         <p class="tight" id="modalPrompt"></p>
       </section>
 
       <pre><code id="modalCode"></code></pre>
 
-      <section class="notes-box" style="margin-top:14px;">
-        <h3>How to run it live</h3>
-        <p class="tight muted" id="modalAskAloud"></p>
-      </section>
-
       <section class="reveal-box" id="hintBox">
-        <h3>Hint</h3>
+        <h3>Dica</h3>
         <div class="answer-text" id="modalHint"></div>
       </section>
 
       <section class="reveal-box" id="answerBox">
-        <h3>Answer</h3>
+        <h3>Resposta</h3>
         <div class="answer-text" id="modalAnswer"></div>
       </section>
 
       <div class="modal-actions">
-        <button onclick="toggleReveal('hint')">Show / hide hint</button>
-        <button class="good" onclick="toggleReveal('answer')">Show / hide answer</button>
-        <button class="good" onclick="awardCurrent()">Award current team</button>
-        <button class="warn" onclick="awardSteal()">Award steal</button>
+        <button onclick="toggleReveal('hint')">Mostrar / ocultar dica</button>
+        <button class="good" onclick="toggleReveal('answer')">Mostrar / ocultar resposta</button>
+        <button class="good" onclick="awardCurrent()">Pontuar equipe da vez</button>
+        <button class="warn" onclick="awardSteal()">Pontuar roubo</button>
         <button onclick="switchTurn()">Switch turn</button>
-        <button class="secondary" onclick="markClosed()">Mark question done</button>
+        <button class="secondary" onclick="markClosed()">Marcar pergunta como usada</button>
       </div>
     </div>
   </div>
@@ -420,162 +416,505 @@
   <script>
     const gameData = [
       {
-        category: 'Control Flow',
+        category: 'Fluxo de Controle',
         questions: [
           {
             points: 10,
-            title: 'Which path executes?',
-            prompt: 'Trace the control flow. Which instructions are skipped, and what is the final value of t2?',
-            askAloud: 'Ask one student only for the path. Ask a second student for the final value and why.',
-            code: `li t0, 7\nli t1, 10\nblt t0, t1, L1\naddi t2, x0, 1\nj L2\n\nL1:\naddi t2, x0, 2\n\nL2:\naddi t2, t2, 3`,
-            hint: 'First decide whether the branch is taken. Only then compute t2.',
-            answer: '7 < 10, so the branch to L1 is taken.\n\nSkipped:\n- addi t2, x0, 1\n- j L2\n\nExecuted path:\nblt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3\n\nFinal value: t2 = 5.'
+            title: 'Qual caminho é executado?',
+            prompt: 'Trace o fluxo de controle. Quais instruções são puladas e qual é o valor final de t2?',
+            code: `li t0, 7
+li t1, 10
+blt t0, t1, L1
+addi t2, x0, 1
+j L2
+
+L1:
+addi t2, x0, 2
+
+L2:
+addi t2, t2, 3`,
+            hint: 'Primeiro decida se o branch é tomado. Só depois calcule t2.',
+            answer: 'Como 7 < 10, o branch para L1 é tomado.
+
+Instruções puladas:
+- addi t2, x0, 1
+- j L2
+
+Caminho executado:
+blt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3
+
+Valor final: t2 = 5.'
           },
           {
             points: 20,
-            title: 'Loop count trap',
-            prompt: 'Does this loop terminate? How many times does the loop body execute?',
-            askAloud: 'Let the team discuss for 15 seconds. Most people answer too fast here.',
-            code: `li t0, 3\n\nloop:\n    addi t0, t0, -1\n    bge t0, x0, loop`,
-            hint: 'Track t0 after the decrement, not before it.',
-            answer: 'Yes, it terminates.\n\nValues after each decrement: 2, 1, 0, -1.\nThe branch repeats while t0 >= 0.\n\nSo the body executes 4 times, not 3.'
+            title: 'Armadilha de contagem do laço',
+            prompt: 'Esse laço termina? Quantas vezes o corpo do laço é executado?',
+            code: `li t0, 3
+
+loop:
+    addi t0, t0, -1
+    bge t0, x0, loop`,
+            hint: 'Acompanhe t0 depois do decremento, não antes.',
+            answer: 'Sim, ele termina.
+
+Valores de t0 após cada decremento: 2, 1, 0, -1.
+O branch repete enquanto t0 >= 0.
+
+Portanto, o corpo do laço executa 4 vezes, e não 3.'
           },
           {
             points: 30,
-            title: 'What high-level construct is this?',
-            prompt: 'Explain what this snippet computes and which high-level loop it corresponds to.',
-            askAloud: 'First ask for the meaning of each register, then ask for the C-like version.',
-            code: `li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    add t1, t1, t0\n    addi t0, t0, 1\n    j loop\n\nend:`,
-            hint: 't0 behaves like an index or counter. t1 is an accumulator.',
-            answer: 'It sums integers from 0 up to a0 - 1.\n\nRegister roles:\n- t0 = loop counter\n- t1 = running sum\n\nEquivalent high-level code:\nfor (i = 0; i < a0; i++) sum += i;\n\nFinal meaning: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
+            title: 'Que construção de alto nível é essa?',
+            prompt: 'Explique o que esse trecho calcula e a que tipo de laço de alto nível ele corresponde.',
+            code: `li t0, 0
+li t1, 0
+
+loop:
+    bge t0, a0, end
+    add t1, t1, t0
+    addi t0, t0, 1
+    j loop
+
+end:`,
+            hint: 't0 se comporta como um índice ou contador. t1 é um acumulador.',
+            answer: 'Ele soma os inteiros de 0 até a0 - 1.
+
+Papel dos registradores:
+- t0 = contador do laço
+- t1 = soma acumulada
+
+Código equivalente em alto nível:
+for (i = 0; i < a0; i++) sum += i;
+
+Significado final: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
+          },
+          {
+            points: 40,
+            title: 'Branches aninhados',
+            prompt: 'Suponha que a0 contém x e a1 contém y. Descreva exatamente qual valor é colocado em t0 em cada caso de entrada.',
+            code: `blt a0, a1, less
+li t0, 0
+j end
+
+less:
+beq a0, x0, zero_case
+li t0, 1
+j end
+
+zero_case:
+li t0, 2
+
+end:`,
+            hint: 'Separe os casos x < y, x >= y e x == 0.',
+            answer: 'Análise por casos:
+- se x >= y, o branch não é tomado e t0 = 0
+- se x < y e x != 0, então t0 = 1
+- se x < y e x == 0, então t0 = 2
+
+Ou seja, o código codifica três casos diferentes em t0.'
           }
         ]
       },
       {
-        category: 'Memory',
+        category: 'Memória',
         questions: [
           {
             points: 10,
-            title: 'What changes in memory?',
-            prompt: 'Assume arr starts as 10, 20, 30, 40. What values are loaded, and what is the final array?',
-            askAloud: 'Have one student compute the loads and another say what gets stored back.',
-            code: `.data\narr: .word 10, 20, 30, 40\n\n.text\nla t0, arr\nlw t1, 4(t0)\nlw t2, 8(t0)\nadd t3, t1, t2\nsw t3, 0(t0)`,
-            hint: 'Offsets are in bytes. Each word is 4 bytes.',
-            answer: 'Loaded values:\n- t1 = 20\n- t2 = 30\n\nThen t3 = 50 and 50 is stored at arr[0].\n\nFinal array: 50, 20, 30, 40.'
+            title: 'O que muda na memória?',
+            prompt: 'Suponha que arr começa como 10, 20, 30, 40. Quais valores são carregados e qual é o vetor final?',
+            code: `.data
+arr: .word 10, 20, 30, 40
+
+.text
+la t0, arr
+lw t1, 4(t0)
+lw t2, 8(t0)
+add t3, t1, t2
+sw t3, 0(t0)`,
+            hint: 'Os offsets estão em bytes. Cada word ocupa 4 bytes.',
+            answer: 'Valores carregados:
+- t1 = 20
+- t2 = 30
+
+Depois, t3 = 50 e 50 é armazenado em arr[0].
+
+Vetor final: 50, 20, 30, 40.'
           },
           {
             points: 20,
-            title: 'Which array element is accessed?',
-            prompt: 'Which element is loaded, and why is there a shift by 2?',
-            askAloud: 'Ask for both the address arithmetic and the high-level array notation.',
-            code: `la t0, arr\nli t1, 3\nslli t1, t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
-            hint: 'Word indexing needs scaling by 4 bytes.',
-            answer: 'The code loads arr[3].\n\nReason:\n- t1 starts as index 3\n- shifting left by 2 multiplies by 4\n- t2 = base address + 12\n- lw then loads the word at that computed address\n\nThe shift by 2 converts a word index into a byte offset.'
+            title: 'Qual elemento do vetor é acessado?',
+            prompt: 'Qual elemento é carregado, e por que há um shift de 2?',
+            code: `la t0, arr
+li t1, 3
+slli t1, t1, 2
+add t2, t0, t1
+lw t3, 0(t2)`,
+            hint: 'Indexação de words precisa ser escalada por 4 bytes.',
+            answer: 'O código carrega arr[3].
+
+Motivo:
+- t1 começa com o índice 3
+- o shift à esquerda por 2 multiplica por 4
+- t2 = endereço base + 12
+- o lw então carrega a word naquele endereço
+
+O shift por 2 converte um índice de words em offset em bytes.'
           },
           {
             points: 30,
             title: 'lb vs lbu',
-            prompt: 'Memory at address 0x1000 contains the byte 0xFF. What is the difference between t1 and t2?',
-            askAloud: 'This is a good signed-vs-unsigned trap. Ask them to say the numeric values, not just “sign-extended.”',
-            code: `li t0, 0x1000\nlb  t1, 0(t0)\nlbu t2, 0(t0)`,
-            hint: 'Think about what 0xFF means as a signed 8-bit value.',
-            answer: 'lb sign-extends the byte. Since 0xFF is -1 in signed 8-bit form, t1 becomes -1 (all bits set in 32-bit form).\n\nlbu zero-extends the byte, so t2 becomes 255.\n\nFinal values:\n- t1 = -1\n- t2 = 255.'
+            prompt: 'A memória no endereço 0x1000 contém o byte 0xFF. Qual é a diferença entre t1 e t2?',
+            code: `li t0, 0x1000
+lb  t1, 0(t0)
+lbu t2, 0(t0)`,
+            hint: 'Pense no que 0xFF significa como valor assinado de 8 bits.',
+            answer: 'lb faz extensão de sinal. Como 0xFF é -1 em 8 bits com sinal, t1 vira -1 (todos os bits em 1 na forma de 32 bits).
+
+lbu faz extensão com zeros, então t2 vira 255.
+
+Valores finais:
+- t1 = -1
+- t2 = 255.'
+          },
+          {
+            points: 40,
+            title: 'Percorrendo ponteiro com stores',
+            prompt: 'Suponha que arr inicialmente contém 4, 7, 9. Qual é o vetor final após a execução?',
+            code: `la t0, arr
+li t1, 3
+
+loop:
+    lw t2, 0(t0)
+    addi t2, t2, -1
+    sw t2, 0(t0)
+    addi t0, t0, 4
+    addi t1, t1, -1
+    bnez t1, loop`,
+            hint: 'Cada iteração decrementa um elemento do vetor e grava de volta.',
+            answer: 'Cada elemento é decrementado em 1 exatamente uma vez.
+
+Inicial: 4, 7, 9
+Final: 3, 6, 8.'
           }
         ]
       },
       {
-        category: 'Address Building',
+        category: 'Construção de Endereços',
         questions: [
           {
             points: 10,
-            title: 'Complete the address',
-            prompt: 'Which instruction goes in the blank, and what value ends in t0?',
-            askAloud: 'First ask for the missing instruction. Then ask why lui alone is not enough.',
-            code: `lui t0, 0x12345\n_____ t0, t0, 0x678`,
-            hint: 'lui gives the upper 20 bits. Something else must finish the low part.',
-            answer: 'The missing instruction is addi.\n\nResult:\nt0 = 0x12345000 + 0x678 = 0x12345678.\n\nWhy lui alone is not enough: it only places the upper 20 bits and clears the lower 12 bits.'
+            title: 'Complete o endereço',
+            prompt: 'Qual instrução entra no espaço em branco, e qual valor termina em t0?',
+            code: `lui t0, 0x12345
+_____ t0, t0, 0x678`,
+            hint: 'lui define os 20 bits superiores. Outra instrução precisa completar a parte baixa.',
+            answer: 'A instrução faltando é addi.
+
+Resultado:
+t0 = 0x12345000 + 0x678 = 0x12345678.
+
+Por que lui sozinho não basta: ele só coloca os 20 bits superiores e zera os 12 bits inferiores.'
           },
           {
             points: 20,
-            title: 'PC-relative thinking',
-            prompt: 'Suppose this auipc instruction is located at address 0x00010000. What value ends up in t0?',
-            askAloud: 'Make them say the conceptual meaning first: PC-relative address construction.',
-            code: `auipc t0, 0x1\naddi  t0, t0, 16`,
-            hint: 'auipc adds the immediate shifted left by 12 to the current PC.',
-            answer: 'auipc t0, 0x1 means: t0 = PC + (0x1 << 12).\n\nAt PC = 0x00010000:\n- after auipc: t0 = 0x00011000\n- after addi 16: t0 = 0x00011010\n\nFinal value: 0x00011010.\n\nConceptually, this is PC-relative address formation.'
+            title: 'Pensando em PC-relative',
+            prompt: 'Suponha que essa instrução auipc está no endereço 0x00010000. Qual valor termina em t0?',
+            code: `auipc t0, 0x1
+addi  t0, t0, 16`,
+            hint: 'auipc soma ao PC o imediato deslocado 12 bits à esquerda.',
+            answer: 'auipc t0, 0x1 significa: t0 = PC + (0x1 << 12).
+
+Com PC = 0x00010000:
+- após auipc: t0 = 0x00011000
+- após addi 16: t0 = 0x00011010
+
+Valor final: 0x00011010.
+
+Conceitualmente, isso constrói um endereço relativo ao PC.'
           },
           {
             points: 30,
-            title: 'la vs manual expansion',
-            prompt: 'The pseudo-instruction la loads an address. Which pair of real instructions is typically used under the hood in position-independent style, and why?',
-            askAloud: 'This one is more conceptual. Ask for the instruction pair and the reason.',
+            title: 'la vs expansão manual',
+            prompt: 'A pseudoinstrução la carrega um endereço. Qual par de instruções reais costuma ser usado por baixo em estilo position-independent, e por quê?',
             code: `la t0, label`,
-            hint: 'Think PC-relative, not absolute addressing.',
-            answer: 'A common expansion is based on auipc plus an offset-adding instruction such as addi, with relocations handled by the assembler and linker.\n\nCore idea:\n- auipc forms a PC-relative base\n- addi finishes the address\n\nWhy: this supports position-independent code and avoids hardcoding one fixed absolute address into the instruction stream.'
+            hint: 'Pense em endereçamento relativo ao PC, não absoluto.',
+            answer: 'Uma expansão comum usa auipc mais uma instrução de soma de offset, como addi, com relocations tratadas pelo montador e pelo linker.
+
+Ideia principal:
+- auipc forma uma base relativa ao PC
+- addi completa o endereço
+
+Por quê: isso ajuda em código position-independent e evita fixar um único endereço absoluto no código.'
+          },
+          {
+            points: 40,
+            title: 'Absoluto vs relativo ao PC',
+            prompt: 'Compare conceitualmente estes dois estilos: usar lui/addi para um endereço fixo versus usar auipc/addi para um rótulo próximo. Em que situação o segundo é especialmente útil?',
+            code: `# estilo 1
+lui   t0, UPPER
+addi  t0, t0, LOWER
+
+# estilo 2
+auipc t0, OFFHI
+addi  t0, t0, OFFLO`,
+            hint: 'Um estilo está mais ligado a um endereço fixo; o outro acompanha o PC.',
+            answer: 'lui/addi é o jeito clássico de construir um valor a partir das partes alta e baixa.
+
+auipc/addi é relativo ao PC: começa do endereço da instrução atual e forma um endereço de destino a partir dele.
+
+O estilo relativo ao PC é especialmente útil em código position-independent, em que o mesmo código pode ser carregado em endereços diferentes.'
           }
         ]
       },
       {
-        category: 'Bug Hunt',
+        category: 'Caça-Bugs',
         questions: [
           {
             points: 10,
-            title: 'Missing store',
-            prompt: 'The programmer wants to increment every element of an array. Why does this fail?',
-            askAloud: 'Let one student explain the intention and another identify the exact missing instruction.',
-            code: `la t0, arr\nli t1, 3\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 1\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
-            hint: 'A register changed, but memory did not.',
-            answer: 'The code loads each element and increments the value in t2, but it never writes the result back.\n\nMissing instruction: sw t2, 0(t0)\n\nIt should appear before the pointer advances.'
+            title: 'Store faltando',
+            prompt: 'O programador quer incrementar cada elemento de um vetor. Por que isso falha?',
+            code: `la t0, arr
+li t1, 3
+
+loop:
+    lw t2, 0(t0)
+    addi t2, t2, 1
+    addi t0, t0, 4
+    addi t1, t1, -1
+    bnez t1, loop`,
+            hint: 'Um registrador mudou, mas a memória não.',
+            answer: 'O código carrega cada elemento e incrementa o valor em t2, mas nunca grava o resultado de volta na memória.
+
+Instrução faltando: sw t2, 0(t0)
+
+Ela deveria aparecer antes do avanço do ponteiro.'
           },
           {
             points: 20,
-            title: 'Wrong index scaling',
-            prompt: 'If the programmer wanted arr[2], what is wrong here?',
-            askAloud: 'Ask for both the bug and one correct fix.',
-            code: `la t0, arr\nli t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
-            hint: 'An array index is not the same thing as a byte offset.',
-            answer: 'The code adds the raw index 2 directly to the base address. That means it moves 2 bytes, not 2 words.\n\nBug: index not scaled by 4.\n\nPossible fixes:\n- slli t1, t1, 2 ; add t2, t0, t1\n- or directly use lw t3, 8(t0) if the index is known.'
+            title: 'Escala de índice errada',
+            prompt: 'Se o programador queria arr[2], o que está errado aqui?',
+            code: `la t0, arr
+li t1, 2
+add t2, t0, t1
+lw t3, 0(t2)`,
+            hint: 'Índice de vetor não é a mesma coisa que offset em bytes.',
+            answer: 'O código soma o índice bruto 2 diretamente ao endereço base. Isso anda 2 bytes, e não 2 words.
+
+Bug: o índice não foi escalado por 4.
+
+Possíveis correções:
+- slli t1, t1, 2 ; add t2, t0, t1
+- ou usar diretamente lw t3, 8(t0), já que o índice é conhecido.'
           },
           {
             points: 30,
-            title: 'Two bugs',
-            prompt: 'This loop is supposed to add 10 to each array element. Find the two bugs.',
-            askAloud: 'Require both bugs for full points. If they find one only, let the other team try to steal the second.',
-            code: `la t0, arr\nli t1, 4\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 10\n    addi t0, t0, 4\n    bnez t1, loop`,
-            hint: 'Think about what changes in memory and what makes a loop progress.',
-            answer: 'Bug 1: missing store. The updated value in t2 is never written back to memory.\n\nBug 2: t1 is never decremented, so the loop does not terminate.\n\nA corrected version would include both:\n- sw t2, 0(t0)\n- addi t1, t1, -1'
+            title: 'Dois bugs',
+            prompt: 'Esse laço deveria somar 10 a cada elemento do vetor. Encontre os dois bugs.',
+            code: `la t0, arr
+li t1, 4
+
+loop:
+    lw t2, 0(t0)
+    addi t2, t2, 10
+    addi t0, t0, 4
+    bnez t1, loop`,
+            hint: 'Pense no que muda na memória e no que faz um laço avançar.',
+            answer: 'Bug 1: falta store. O valor atualizado em t2 nunca é gravado de volta na memória.
+
+Bug 2: t1 nunca é decrementado, então o laço não termina.
+
+Uma versão correta precisaria de ambos:
+- sw t2, 0(t0)
+- addi t1, t1, -1'
+          },
+          {
+            points: 40,
+            title: 'Bug de comparação com sinal',
+            prompt: 'O programador afirma que isso testa se um elemento do vetor é maior que 200 como um byte sem sinal. Por que o código está errado?',
+            code: `la t0, arr
+lb t1, 0(t0)
+li t2, 200
+bgt t1, t2, big`,
+            hint: 'A palavra “sem sinal” no enunciado é a pista principal.',
+            answer: 'O bug é usar lb em vez de lbu.
+
+Se o byte na memória tiver o bit mais significativo ligado, lb faz extensão de sinal e transforma valores como 0xFF em -1. Isso quebra a ideia de comparação sem sinal.
+
+Para tratar o byte como valor entre 0 e 255, o correto seria lbu.
+
+Também dá para discutir a expansão da pseudoinstrução de branch, mas o bug principal aqui é o load com sinal.'
           }
         ]
       },
       {
-        category: 'Mixed Challenge',
+        category: 'Desafio Misto',
         questions: [
           {
             points: 10,
-            title: 'Which pseudo-instruction is this?',
-            prompt: 'Name the pseudo-instruction equivalent to each real instruction form.',
-            askAloud: 'Do it fast: first pseudo-instruction, then the next one.',
-            code: `addi t0, t1, 0\njal  x0, label\njalr x0, 0(ra)`,
-            hint: 'These three appear all the time in hand-written code.',
-            answer: 'Equivalent pseudo-instructions:\n- addi t0, t1, 0  -> mv t0, t1\n- jal x0, label   -> j label\n- jalr x0, 0(ra)  -> ret'
+            title: 'Que pseudoinstrução é essa?',
+            prompt: 'Diga a pseudoinstrução equivalente a cada forma real abaixo.',
+            code: `addi t0, t1, 0
+jal  x0, label
+jalr x0, 0(ra)`,
+            hint: 'Essas três aparecem o tempo todo em código escrito à mão.',
+            answer: 'Pseudoinstruções equivalentes:
+- addi t0, t1, 0  -> mv t0, t1
+- jal x0, label   -> j label
+- jalr x0, 0(ra)  -> ret'
           },
           {
             points: 20,
-            title: 'What does this loop count?',
-            prompt: 'Assume arr holds 5 integers. What quantity is stored in t2 at the end?',
-            askAloud: 'Ask them to describe the algorithm in one sentence, not just give a register value.',
-            code: `la t0, arr\nli t1, 5\nli t2, 0\n\nloop:\n    lw t3, 0(t0)\n    blt t3, x0, neg\n    j next\n\nneg:\n    addi t2, t2, 1\n\nnext:\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
-            hint: 'Only one kind of element makes t2 increase.',
-            answer: 'The loop scans 5 integers from arr and counts how many are negative.\n\nFinal meaning:\nt2 = number of negative elements in the array.'
+            title: 'O que esse laço conta?',
+            prompt: 'Suponha que arr contém 5 inteiros. Que quantidade fica armazenada em t2 no final?',
+            code: `la t0, arr
+li t1, 5
+li t2, 0
+
+loop:
+    lw t3, 0(t0)
+    blt t3, x0, neg
+    j next
+
+neg:
+    addi t2, t2, 1
+
+next:
+    addi t0, t0, 4
+    addi t1, t1, -1
+    bnez t1, loop`,
+            hint: 'Só um tipo de elemento faz t2 aumentar.',
+            answer: 'O laço percorre 5 inteiros de arr e conta quantos são negativos.
+
+Significado final:
+t2 = número de elementos negativos no vetor.'
           },
           {
             points: 30,
-            title: 'Final boss',
-            prompt: 'What does this code do, and what subtle mistake prevents it from computing the true average of 6 numbers?',
-            askAloud: 'Require both parts: intended algorithm and the exact flaw.',
-            code: `la t0, arr\nli t1, 6\nli t2, 0\n\nloop:\n    beqz t1, end\n    lw t3, 0(t0)\n    add t2, t2, t3\n    addi t0, t0, 4\n    addi t1, t1, -1\n    j loop\n\nend:\nsrai a0, t2, 1`,
-            hint: 'The loop does sum 6 values. The problem is only at the very end.',
-            answer: 'The loop correctly sums 6 array elements into t2.\n\nIntended high-level idea: compute an average or some scaled result from the sum.\n\nBut the final line does arithmetic right shift by 1, which divides by 2, not by 6.\n\nSo the code does NOT compute the average of 6 numbers. It computes sum / 2 (using signed shift semantics), which is only correct for a completely different task.'
+            title: 'Chefão final',
+            prompt: 'O que esse código faz, e qual erro sutil impede que ele calcule a média verdadeira de 6 números?',
+            code: `la t0, arr
+li t1, 6
+li t2, 0
+
+loop:
+    beqz t1, end
+    lw t3, 0(t0)
+    add t2, t2, t3
+    addi t0, t0, 4
+    addi t1, t1, -1
+    j loop
+
+end:
+srai a0, t2, 1`,
+            hint: 'O laço realmente soma 6 valores. O problema está só no final.',
+            answer: 'O laço soma corretamente 6 elementos do vetor em t2.
+
+A ideia de alto nível parece ser calcular uma média ou algum valor derivado da soma.
+
+Mas a última linha faz shift aritmético à direita por 1, o que divide por 2, e não por 6.
+
+Portanto, o código NÃO calcula a média de 6 números. Ele calcula soma / 2, o que só estaria correto para outra tarefa.'
+          },
+          {
+            points: 40,
+            title: 'Reconstrua a instrução faltando',
+            prompt: 'Se o programador quer que t2 termine com o maior entre t0 e t1, que instrução ou instruções entram na região em branco?',
+            code: `# queremos t2 = max(t0, t1)
+blt t0, t1, use_t1
+_____
+j end
+
+use_t1:
+_____
+
+end:`,
+            hint: 'Um caminho deve mover t0 para t2; o outro deve mover t1 para t2.',
+            answer: 'Uma solução correta é:
+
+blt t0, t1, use_t1
+mv t2, t0
+j end
+
+use_t1:
+mv t2, t1
+
+end:
+
+Também seriam aceitas versões equivalentes usando addi com 0.'
+          }
+        ]
+      },
+      {
+        category: 'C para Assembly',
+        questions: [
+          {
+            points: 10,
+            title: 'Traduza uma atribuição simples',
+            prompt: 'Traduza para RISC-V supondo x em s0, y em s1 e z em s2: z = x + y;',
+            code: `// C
+z = x + y;`,
+            hint: 'Todas as variáveis já estão em registradores.',
+            answer: 'Como x, y e z já estão em registradores:
+
+add s2, s0, s1
+
+Isso calcula z = x + y.'
+          },
+          {
+            points: 20,
+            title: 'Traduza um if',
+            prompt: 'Traduza para RISC-V, supondo x em s0 e y em s1: if (x < y) x = x + 1;',
+            code: `// C
+if (x < y)
+    x = x + 1;`,
+            hint: 'Uma forma limpa é desviar do incremento quando a condição for falsa.',
+            answer: 'Uma tradução correta é:
+
+bge s0, s1, end
+addi s0, s0, 1
+end:
+
+Motivo: se x >= y, pulamos o corpo. Caso contrário, incrementamos x.'
+          },
+          {
+            points: 30,
+            title: 'Traduza um laço de contagem',
+            prompt: 'Traduza para RISC-V supondo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }',
+            code: `// C
+while (i < 10) {
+    sum += i;
+    i++;
+}`,
+            hint: 'Um laço precisa de teste, corpo e salto de volta.',
+            answer: 'Uma tradução correta é:
+
+loop:
+    li t0, 10
+    bge s0, t0, end
+    add s1, s1, s0
+    addi s0, s0, 1
+    j loop
+end:
+
+Também seriam aceitas soluções equivalentes que colocam li t0, 10 fora do laço.'
+          },
+          {
+            points: 40,
+            title: 'Traduza acesso a vetor',
+            prompt: 'Traduza para RISC-V supondo endereço base de arr em s0, i em s1 e x em s2: x = arr[i];',
+            code: `// C
+x = arr[i];`,
+            hint: 'Words ocupam 4 bytes, então o índice precisa ser escalado.',
+            answer: 'Uma tradução correta é:
+
+slli t0, s1, 2
+add  t0, s0, t0
+lw   s2, 0(t0)
+
+Motivo:
+- multiplica i por 4
+- soma ao endereço base de arr
+- carrega a word para x'
           }
         ]
       }
@@ -604,7 +943,7 @@
     }
 
     function updateTurnBadge() {
-      turnBadgeEl.textContent = `Current turn: ${teamName(state.currentTeam)}`;
+      turnBadgeEl.textContent = `Vez atual: ${teamName(state.currentTeam)}`;
     }
 
     function renderScores() {
@@ -623,7 +962,7 @@
       state.currentTeam = state.currentTeam === 'A' ? 'B' : 'A';
       renderScores();
       if (state.currentQuestion) {
-        document.getElementById('modalTurn').textContent = `Turn: ${teamName(state.currentTeam)}`;
+        document.getElementById('modalTurn').textContent = `Vez: ${teamName(state.currentTeam)}`;
       }
     }
 
@@ -682,11 +1021,10 @@
 
       document.getElementById('modalTitle').textContent = q.title;
       document.getElementById('modalCategory').textContent = gameData[catIndex].category;
-      document.getElementById('modalPoints').textContent = `${q.points} points`;
-      document.getElementById('modalTurn').textContent = `Turn: ${teamName(state.currentTeam)}`;
+      document.getElementById('modalPoints').textContent = `${q.points} pontos`;
+      document.getElementById('modalTurn').textContent = `Vez: ${teamName(state.currentTeam)}`;
       document.getElementById('modalPrompt').textContent = q.prompt;
       document.getElementById('modalCode').textContent = q.code;
-      document.getElementById('modalAskAloud').textContent = q.askAloud;
       document.getElementById('modalHint').textContent = q.hint;
       document.getElementById('modalAnswer').textContent = q.answer;
       hintBoxEl.classList.remove('show');

@@ -587,47 +587,27 @@
             title: 'Atribuição simples',
             prompt: 'Traduza para RISC-V, assumindo x em s0, y em s1 e z em s2: z = x + y;',
             askAloud: 'Peça a solução mais curta possível.',
-            code: `// C
-z = x + y;`,
+            code: `// C\nz = x + y;`,
             hint: 'Todas as variáveis já estão em registradores.',
-            answer: 'Uma solução correta é:
-add s2, s0, s1'
+            answer: 'Uma solução correta é:\nadd s2, s0, s1'
           },
           {
             points: 20,
             title: 'If simples',
             prompt: 'Traduza para RISC-V, assumindo x em s0 e y em s1: if (x < y) x = x + 1;',
             askAloud: 'Peça a lógica do branch e uma estrutura mínima correta.',
-            code: `// C
-if (x < y)
-    x = x + 1;`,
+            code: `// C\nif (x < y)\n x = x + 1;`,
             hint: 'Uma solução limpa é pular o corpo quando a condição for falsa.',
-            answer: 'Uma solução correta é:
-
-bge s0, s1, end
-addi s0, s0, 1
-end:'
+            answer: 'Uma solução correta é:\nbge s0, s1, end\naddi s0, s0, 1\nend:'
           },
           {
             points: 30,
             title: 'Laço while',
             prompt: 'Traduza para RISC-V, assumindo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }',
             askAloud: 'Exija teste, corpo e salto de volta.',
-            code: `// C
-while (i < 10) {
-    sum += i;
-    i++;
-}`,
+            code: '// C\nwhile (i < 10) {\n sum += i;\n i++;\n}',
             hint: 'Você precisa de um rótulo do laço, um teste e um jump de volta.',
-            answer: 'Uma solução correta é:
-
-loop:
-    li t0, 10
-    bge s0, t0, end
-    add s1, s1, s0
-    addi s0, s0, 1
-    j loop
-end:'
+            answer: 'Uma solução correta é:\nloop:\nli t0, 10\nbge s0, t0, end\nadd s1, s1, s0\naddi s0, s0, 1\nj loop\nend:'
           }
         ]
       },

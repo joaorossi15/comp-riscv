@@ -427,27 +427,73 @@
             title: 'Qual caminho é executado?',
             prompt: 'Trace o fluxo de controle. Quais instruções são puladas e qual é o valor final de t2?',
             askAloud: 'Peça a um aluno apenas o caminho. Peça a outro aluno o valor final e o porquê.',
-            code: `li t0, 7\nli t1, 10\nblt t0, t1, L1\naddi t2, x0, 1\nj L2\n\nL1:\naddi t2, x0, 2\n\nL2:\naddi t2, t2, 3`,
+            code: `li t0, 7
+li t1, 10
+blt t0, t1, L1
+addi t2, x0, 1
+j L2
+
+L1:
+addi t2, x0, 2
+
+L2:
+addi t2, t2, 3`,
             hint: 'Primeiro decida se o branch é tomado. Só depois calcule t2.',
-            answer: 'Como 7 < 10, o branch para L1 é tomado.\n\nPuladas:\n- addi t2, x0, 1\n- j L2\n\nCaminho executado:\nblt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3\n\nValor final: t2 = 5.'
+            answer: 'Como 7 < 10, o branch para L1 é tomado.
+
+Puladas:
+- addi t2, x0, 1
+- j L2
+
+Caminho executado:
+blt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3
+
+Valor final: t2 = 5.'
           },
           {
             points: 20,
             title: 'Armadilha na contagem do laço',
             prompt: 'Esse laço termina? Quantas vezes o corpo do laço é executado?',
             askAloud: 'Deixe a equipe discutir por 15 segundos. Muita gente responde rápido demais aqui.',
-            code: `li t0, 3\n\nloop:\n    addi t0, t0, -1\n    bge t0, x0, loop`,
+            code: `li t0, 3
+
+loop:
+    addi t0, t0, -1
+    bge t0, x0, loop`,
             hint: 'Acompanhe t0 depois do decremento, não antes.',
-            answer: 'Sim, ele termina.\n\nValores após cada decremento: 2, 1, 0, -1.\nO branch repete enquanto t0 >= 0.\n\nEntão o corpo executa 4 vezes, e não 3.'
+            answer: 'Sim, ele termina.
+
+Valores após cada decremento: 2, 1, 0, -1.
+O branch repete enquanto t0 >= 0.
+
+Então o corpo executa 4 vezes, e não 3.'
           },
           {
             points: 30,
             title: 'Que construção de alto nível é essa?',
             prompt: 'Explique o que esse trecho calcula e a que laço de alto nível ele corresponde.',
             askAloud: 'Primeiro pergunte o papel de cada registrador, depois peça a versão em C.',
-            code: `li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    add t1, t1, t0\n    addi t0, t0, 1\n    j loop\n\nend:`,
+            code: `li t0, 0
+li t1, 0
+
+loop:
+    bge t0, a0, end
+    add t1, t1, t0
+    addi t0, t0, 1
+    j loop
+
+end:`,
             hint: 't0 se comporta como um índice ou contador. t1 é um acumulador.',
-            answer: 'Ele soma os inteiros de 0 até a0 - 1.\n\nPapéis dos registradores:\n- t0 = contador do laço\n- t1 = soma acumulada\n\nCódigo equivalente em alto nível:\nfor (i = 0; i < a0; i++) sum += i;\n\nSignificado final: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
+            answer: 'Ele soma os inteiros de 0 até a0 - 1.
+
+Papéis dos registradores:
+- t0 = contador do laço
+- t1 = soma acumulada
+
+Código equivalente em alto nível:
+for (i = 0; i < a0; i++) sum += i;
+
+Significado final: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
           }
         ]
       },
@@ -459,27 +505,61 @@
             title: 'O que muda na memória?',
             prompt: 'Suponha que arr começa como 10, 20, 30, 40. Quais valores são carregados e qual é o vetor final?',
             askAloud: 'Peça a um aluno para calcular os loads e a outro para dizer o que é armazenado de volta.',
-            code: `.data\narr: .word 10, 20, 30, 40\n\n.text\nla t0, arr\nlw t1, 4(t0)\nlw t2, 8(t0)\nadd t3, t1, t2\nsw t3, 0(t0)`,
+            code: `.data
+arr: .word 10, 20, 30, 40
+
+.text
+la t0, arr
+lw t1, 4(t0)
+lw t2, 8(t0)
+add t3, t1, t2
+sw t3, 0(t0)`,
             hint: 'Os offsets estão em bytes. Cada word tem 4 bytes.',
-            answer: 'Valores carregados:\n- t1 = 20\n- t2 = 30\n\nDepois t3 = 50 e 50 é armazenado em arr[0].\n\nVetor final: 50, 20, 30, 40.'
+            answer: 'Valores carregados:
+- t1 = 20
+- t2 = 30
+
+Depois t3 = 50 e 50 é armazenado em arr[0].
+
+Vetor final: 50, 20, 30, 40.'
           },
           {
             points: 20,
             title: 'Qual elemento do vetor é acessado?',
             prompt: 'Qual elemento é carregado e por que existe um shift de 2?',
             askAloud: 'Peça tanto a aritmética de endereço quanto a notação de vetor em alto nível.',
-            code: `la t0, arr\nli t1, 3\nslli t1, t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
+            code: `la t0, arr
+li t1, 3
+slli t1, t1, 2
+add t2, t0, t1
+lw t3, 0(t2)`,
             hint: 'Indexação de words precisa de escala por 4 bytes.',
-            answer: 'O código carrega arr[3].\n\nMotivo:\n- t1 começa com índice 3\n- shift à esquerda por 2 multiplica por 4\n- t2 = endereço base + 12\n- lw carrega a word nesse endereço\n\nO shift por 2 converte um índice de words em offset em bytes.'
+            answer: 'O código carrega arr[3].
+
+Motivo:
+- t1 começa com índice 3
+- shift à esquerda por 2 multiplica por 4
+- t2 = endereço base + 12
+- lw carrega a word nesse endereço
+
+O shift por 2 converte um índice de words em offset em bytes.'
           },
           {
             points: 30,
             title: 'lb vs lbu',
             prompt: 'A memória no endereço 0x1000 contém o byte 0xFF. Qual é a diferença entre t1 e t2?',
             askAloud: 'Essa é uma boa armadilha de signed vs unsigned. Peça os valores numéricos, não só “com extensão de sinal”.',
-            code: `li t0, 0x1000\nlb  t1, 0(t0)\nlbu t2, 0(t0)`,
+            code: `li t0, 0x1000
+lb  t1, 0(t0)
+lbu t2, 0(t0)`,
             hint: 'Pense no que 0xFF significa como valor assinado de 8 bits.',
-            answer: 'lb faz extensão de sinal no byte. Como 0xFF é -1 em 8 bits com sinal, t1 vira -1 (todos os bits em 1 em 32 bits).\n\nlbu faz extensão com zeros, então t2 vira 255.\n\nValores finais:\n- t1 = -1\n- t2 = 255.'
+            answer: 'lb faz extensão de sinal no byte. Como 0xFF é -1 em 8 bits com sinal, t1 vira -1 (todos os bits em 1 em 32 bits).
+
+lbu faz extensão com zeros, então t2 vira 255.
+
+Valores finais:
+- t1 = -1
+- t2 = 255.'
           }
         ]
       },
@@ -491,18 +571,33 @@
             title: 'Complete o endereço',
             prompt: 'Qual instrução entra no espaço em branco e que valor termina em t0?',
             askAloud: 'Primeiro pergunte a instrução faltando. Depois pergunte por que lui sozinho não basta.',
-            code: `lui t0, 0x12345\n_____ t0, t0, 0x678`,
+            code: `lui t0, 0x12345
+_____ t0, t0, 0x678`,
             hint: 'lui fornece os 20 bits de cima. Algo mais precisa completar a parte baixa.',
-            answer: 'A instrução faltando é addi.\n\nResultado:\nt0 = 0x12345000 + 0x678 = 0x12345678.\n\nPor que lui sozinho não basta: ele apenas coloca os 20 bits superiores e zera os 12 bits inferiores.'
+            answer: 'A instrução faltando é addi.
+
+Resultado:
+t0 = 0x12345000 + 0x678 = 0x12345678.
+
+Por que lui sozinho não basta: ele apenas coloca os 20 bits superiores e zera os 12 bits inferiores.'
           },
           {
             points: 20,
             title: 'Pensando em PC-relative',
             prompt: 'Suponha que essa instrução auipc esteja no endereço 0x00010000. Que valor termina em t0?',
             askAloud: 'Faça a turma dizer antes o significado conceitual: construção de endereço relativa ao PC.',
-            code: `auipc t0, 0x1\naddi  t0, t0, 16`,
+            code: `auipc t0, 0x1
+addi  t0, t0, 16`,
             hint: 'auipc soma ao PC atual o imediato deslocado 12 bits à esquerda.',
-            answer: 'auipc t0, 0x1 significa: t0 = PC + (0x1 << 12).\n\nCom PC = 0x00010000:\n- após auipc: t0 = 0x00011000\n- após addi 16: t0 = 0x00011010\n\nValor final: 0x00011010.\n\nConceitualmente, isso é formação de endereço relativa ao PC.'
+            answer: 'auipc t0, 0x1 significa: t0 = PC + (0x1 << 12).
+
+Com PC = 0x00010000:
+- após auipc: t0 = 0x00011000
+- após addi 16: t0 = 0x00011010
+
+Valor final: 0x00011010.
+
+Conceitualmente, isso é formação de endereço relativa ao PC.'
           },
           {
             points: 30,
@@ -511,7 +606,13 @@
             askAloud: 'Essa é mais conceitual. Pergunte o par de instruções e o motivo.',
             code: `la t0, label`,
             hint: 'Pense em endereçamento relativo ao PC, não absoluto.',
-            answer: 'Uma expansão comum se baseia em auipc mais uma instrução que soma o offset, como addi, com relocations tratadas pelo assembler e pelo linker.\n\nIdeia central:\n- auipc forma uma base relativa ao PC\n- addi completa o endereço\n\nPor quê: isso permite código position-independent e evita fixar um único endereço absoluto no fluxo de instruções.'
+            answer: 'Uma expansão comum se baseia em auipc mais uma instrução que soma o offset, como addi, com relocations tratadas pelo assembler e pelo linker.
+
+Ideia central:
+- auipc forma uma base relativa ao PC
+- addi completa o endereço
+
+Por quê: isso permite código position-independent e evita fixar um único endereço absoluto no fluxo de instruções.'
           }
         ]
       },
@@ -523,27 +624,61 @@
             title: 'Store faltando',
             prompt: 'O programador quer incrementar cada elemento de um vetor. Por que isso falha?',
             askAloud: 'Peça a um aluno para explicar a intenção e a outro para identificar a instrução que falta.',
-            code: `la t0, arr\nli t1, 3\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 1\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
+            code: `la t0, arr
+li t1, 3
+
+loop:
+    lw t2, 0(t0)
+    addi t2, t2, 1
+    addi t0, t0, 4
+    addi t1, t1, -1
+    bnez t1, loop`,
             hint: 'Um registrador mudou, mas a memória não.',
-            answer: 'O código carrega cada elemento e incrementa o valor em t2, mas nunca grava o resultado de volta.\n\nInstrução faltando: sw t2, 0(t0)\n\nEla deveria aparecer antes do avanço do ponteiro.'
+            answer: 'O código carrega cada elemento e incrementa o valor em t2, mas nunca grava o resultado de volta.
+
+Instrução faltando: sw t2, 0(t0)
+
+Ela deveria aparecer antes do avanço do ponteiro.'
           },
           {
             points: 20,
             title: 'Escala de índice errada',
             prompt: 'Se o programador quisesse arr[2], o que está errado aqui?',
             askAloud: 'Peça tanto o bug quanto uma correção válida.',
-            code: `la t0, arr\nli t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
+            code: `la t0, arr
+li t1, 2
+add t2, t0, t1
+lw t3, 0(t2)`,
             hint: 'Índice de vetor não é a mesma coisa que offset em bytes.',
-            answer: 'O código soma o índice bruto 2 diretamente ao endereço base. Isso significa andar 2 bytes, e não 2 words.\n\nBug: índice sem escala por 4.\n\nCorreções possíveis:\n- slli t1, t1, 2 ; add t2, t0, t1\n- ou usar diretamente lw t3, 8(t0) se o índice já for conhecido.'
+            answer: 'O código soma o índice bruto 2 diretamente ao endereço base. Isso significa andar 2 bytes, e não 2 words.
+
+Bug: índice sem escala por 4.
+
+Correções possíveis:
+- slli t1, t1, 2 ; add t2, t0, t1
+- ou usar diretamente lw t3, 8(t0) se o índice já for conhecido.'
           },
           {
             points: 30,
             title: 'Dois bugs',
             prompt: 'Esse laço deveria somar 10 a cada elemento do vetor. Encontre os dois bugs.',
             askAloud: 'Exija os dois bugs para a pontuação total. Se encontrarem apenas um, deixe a outra equipe roubar o segundo.',
-            code: `la t0, arr\nli t1, 4\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 10\n    addi t0, t0, 4\n    bnez t1, loop`,
+            code: `la t0, arr
+li t1, 4
+
+loop:
+    lw t2, 0(t0)
+    addi t2, t2, 10
+    addi t0, t0, 4
+    bnez t1, loop`,
             hint: 'Pense no que muda na memória e no que faz um laço progredir.',
-            answer: 'Bug 1: falta o store. O valor atualizado em t2 nunca é gravado de volta na memória.\n\nBug 2: t1 nunca é decrementado, então o laço não termina.\n\nUma versão correta precisaria dos dois:\n- sw t2, 0(t0)\n- addi t1, t1, -1'
+            answer: 'Bug 1: falta o store. O valor atualizado em t2 nunca é gravado de volta na memória.
+
+Bug 2: t1 nunca é decrementado, então o laço não termina.
+
+Uma versão correta precisaria dos dois:
+- sw t2, 0(t0)
+- addi t1, t1, -1'
           }
         ]
       },
@@ -555,27 +690,121 @@
             title: 'Que pseudoinstrução é essa?',
             prompt: 'Diga a pseudoinstrução equivalente a cada forma de instrução real.',
             askAloud: 'Faça rápido: primeiro uma pseudoinstrução, depois a seguinte.',
-            code: `addi t0, t1, 0\njal  x0, label\njalr x0, 0(ra)`,
+            code: `addi t0, t1, 0
+jal  x0, label
+jalr x0, 0(ra)`,
             hint: 'Essas três aparecem o tempo todo em código escrito à mão.',
-            answer: 'Pseudoinstruções equivalentes:\n- addi t0, t1, 0  -> mv t0, t1\n- jal x0, label   -> j label\n- jalr x0, 0(ra)  -> ret'
+            answer: 'Pseudoinstruções equivalentes:
+- addi t0, t1, 0  -> mv t0, t1
+- jal x0, label   -> j label
+- jalr x0, 0(ra)  -> ret'
           },
           {
             points: 20,
             title: 'O que esse laço conta?',
             prompt: 'Suponha que arr tenha 5 inteiros. Que quantidade fica armazenada em t2 no final?',
             askAloud: 'Peça que descrevam o algoritmo em uma frase, e não apenas um valor de registrador.',
-            code: `la t0, arr\nli t1, 5\nli t2, 0\n\nloop:\n    lw t3, 0(t0)\n    blt t3, x0, neg\n    j next\n\nneg:\n    addi t2, t2, 1\n\nnext:\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
+            code: `la t0, arr
+li t1, 5
+li t2, 0
+
+loop:
+    lw t3, 0(t0)
+    blt t3, x0, neg
+    j next
+
+neg:
+    addi t2, t2, 1
+
+next:
+    addi t0, t0, 4
+    addi t1, t1, -1
+    bnez t1, loop`,
             hint: 'Só um tipo de elemento faz t2 aumentar.',
-            answer: 'O laço percorre 5 inteiros de arr e conta quantos são negativos.\n\nSignificado final:\nt2 = número de elementos negativos no vetor.'
+            answer: 'O laço percorre 5 inteiros de arr e conta quantos são negativos.
+
+Significado final:
+t2 = número de elementos negativos no vetor.'
           },
           {
             points: 30,
             title: 'Chefão final',
             prompt: 'O que esse código faz e qual erro sutil impede que ele calcule a média verdadeira de 6 números?',
             askAloud: 'Exija as duas partes: algoritmo pretendido e falha exata.',
-            code: `la t0, arr\nli t1, 6\nli t2, 0\n\nloop:\n    beqz t1, end\n    lw t3, 0(t0)\n    add t2, t2, t3\n    addi t0, t0, 4\n    addi t1, t1, -1\n    j loop\n\nend:\nsrai a0, t2, 1`,
+            code: `la t0, arr
+li t1, 6
+li t2, 0
+
+loop:
+    beqz t1, end
+    lw t3, 0(t0)
+    add t2, t2, t3
+    addi t0, t0, 4
+    addi t1, t1, -1
+    j loop
+
+end:
+srai a0, t2, 1`,
             hint: 'O laço realmente soma 6 valores. O problema está apenas no final.',
-            answer: 'O laço soma corretamente 6 elementos do vetor em t2.\n\nA ideia de alto nível parece ser calcular uma média ou algum valor escalonado a partir da soma.\n\nMas a última linha faz um shift aritmético à direita por 1, que divide por 2, e não por 6.\n\nPortanto, o código NÃO calcula a média de 6 números. Ele calcula soma / 2 (com semântica de shift assinado), o que só estaria correto para outra tarefa completamente diferente.'
+            answer: 'O laço soma corretamente 6 elementos do vetor em t2.
+
+A ideia de alto nível parece ser calcular uma média ou algum valor escalonado a partir da soma.
+
+Mas a última linha faz um shift aritmético à direita por 1, que divide por 2, e não por 6.
+
+Portanto, o código NÃO calcula a média de 6 números. Ele calcula soma / 2 (com semântica de shift assinado), o que só estaria correto para outra tarefa completamente diferente.'
+          }
+        ]
+      },
+      {
+        category: 'Tradução de C para Assembly',
+        questions: [
+          {
+            points: 10,
+            title: 'Atribuição simples',
+            prompt: 'Traduza para RISC-V, assumindo x em s0, y em s1 e z em s2: z = x + y;',
+            askAloud: 'Peça a solução mais curta possível.',
+            code: `// C
+z = x + y;`,
+            hint: 'Todas as variáveis já estão em registradores.',
+            answer: 'Uma solução correta é:
+add s2, s0, s1'
+          },
+          {
+            points: 20,
+            title: 'If simples',
+            prompt: 'Traduza para RISC-V, assumindo x em s0 e y em s1: if (x < y) x = x + 1;',
+            askAloud: 'Peça a lógica do branch e uma estrutura mínima correta.',
+            code: `// C
+if (x < y)
+    x = x + 1;`,
+            hint: 'Uma solução limpa é pular o corpo quando a condição for falsa.',
+            answer: 'Uma solução correta é:
+
+bge s0, s1, end
+addi s0, s0, 1
+end:'
+          },
+          {
+            points: 30,
+            title: 'Laço while',
+            prompt: 'Traduza para RISC-V, assumindo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }',
+            askAloud: 'Exija teste, corpo e salto de volta.',
+            code: `// C
+while (i < 10) {
+    sum += i;
+    i++;
+}`,
+            hint: 'Você precisa de um rótulo do laço, um teste e um jump de volta.',
+            answer: 'Uma solução correta é:
+
+loop:
+    li t0, 10
+    bge s0, t0, end
+    add s1, s1, s0
+    addi s0, s0, 1
+    j loop
+end:'
           }
         ]
       }

@@ -580,34 +580,54 @@
         ]
       },
       {
-        category: 'aaaa',
+        category: 'Tradução de C para Assembly',
         questions: [
           {
             points: 10,
-            title: 'Store faltando',
-            prompt: 'O programador quer incrementar cada elemento de um vetor. Por que isso falha?',
-            askAloud: 'Peça a um aluno para explicar a intenção e a outro para identificar a instrução que falta.',
-            code: `la t0, arr\nli t1, 3\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 1\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
-            hint: 'Um registrador mudou, mas a memória não.',
-            answer: 'O código carrega cada elemento e incrementa o valor em t2, mas nunca grava o resultado de volta.\n\nInstrução faltando: sw t2, 0(t0)\n\nEla deveria aparecer antes do avanço do ponteiro.'
+            title: 'Atribuição simples',
+            prompt: 'Traduza para RISC-V, assumindo x em s0, y em s1 e z em s2: z = x + y;',
+            askAloud: 'Peça a solução mais curta possível.',
+            code: `// C
+z = x + y;`,
+            hint: 'Todas as variáveis já estão em registradores.',
+            answer: 'Uma solução correta é:
+add s2, s0, s1'
           },
           {
             points: 20,
-            title: 'Escala de índice errada',
-            prompt: 'Se o programador quisesse arr[2], o que está errado aqui?',
-            askAloud: 'Peça tanto o bug quanto uma correção válida.',
-            code: `la t0, arr\nli t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
-            hint: 'Índice de vetor não é a mesma coisa que offset em bytes.',
-            answer: 'O código soma o índice bruto 2 diretamente ao endereço base. Isso significa andar 2 bytes, e não 2 words.\n\nBug: índice sem escala por 4.\n\nCorreções possíveis:\n- slli t1, t1, 2 ; add t2, t0, t1\n- ou usar diretamente lw t3, 8(t0) se o índice já for conhecido.'
+            title: 'If simples',
+            prompt: 'Traduza para RISC-V, assumindo x em s0 e y em s1: if (x < y) x = x + 1;',
+            askAloud: 'Peça a lógica do branch e uma estrutura mínima correta.',
+            code: `// C
+if (x < y)
+    x = x + 1;`,
+            hint: 'Uma solução limpa é pular o corpo quando a condição for falsa.',
+            answer: 'Uma solução correta é:
+
+bge s0, s1, end
+addi s0, s0, 1
+end:'
           },
           {
             points: 30,
-            title: 'Dois bugs',
-            prompt: 'Esse laço deveria somar 10 a cada elemento do vetor. Encontre os dois bugs.',
-            askAloud: 'Exija os dois bugs para a pontuação total. Se encontrarem apenas um, deixe a outra equipe roubar o segundo.',
-            code: `la t0, arr\nli t1, 4\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 10\n    addi t0, t0, 4\n    bnez t1, loop`,
-            hint: 'Pense no que muda na memória e no que faz um laço progredir.',
-            answer: 'Bug 1: falta o store. O valor atualizado em t2 nunca é gravado de volta na memória.\n\nBug 2: t1 nunca é decrementado, então o laço não termina.\n\nUma versão correta precisaria dos dois:\n- sw t2, 0(t0)\n- addi t1, t1, -1'
+            title: 'Laço while',
+            prompt: 'Traduza para RISC-V, assumindo i em s0 e sum em s1: while (i < 10) { sum += i; i++; }',
+            askAloud: 'Exija teste, corpo e salto de volta.',
+            code: `// C
+while (i < 10) {
+    sum += i;
+    i++;
+}`,
+            hint: 'Você precisa de um rótulo do laço, um teste e um jump de volta.',
+            answer: 'Uma solução correta é:
+
+loop:
+    li t0, 10
+    bge s0, t0, end
+    add s1, s1, s0
+    addi s0, s0, 1
+    j loop
+end:'
           }
         ]
       },

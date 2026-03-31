@@ -154,7 +154,7 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       overflow: hidden;
-      min-height: 390px;
+      min-height: 290px;
       display: flex;
       flex-direction: column;
     }
@@ -174,7 +174,7 @@
 
     .questions {
       display: grid;
-      grid-template-rows: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
       gap: 12px;
       padding: 14px;
       flex: 1;
@@ -420,136 +420,328 @@
   <script>
     const gameData = [
       {
-        category: 'Fluxo de Controle',
-        questions: [
-          {
-            points: 10,
-            title: 'Qual caminho é executado?',
-            prompt: 'Trace o fluxo de controle. Quais instruções são puladas e qual é o valor final de t2?',
-            code: `li t0, 7\nli t1, 10\nblt t0, t1, L1\naddi t2, x0, 1\nj L2\n\nL1:\naddi t2, x0, 2\n\nL2:\naddi t2, t2, 3`,
-            hint: 'Primeiro decida se o branch é tomado. Só depois calcule t2.',
-            answer: 'Como 7 < 10, o branch para L1 é tomado.\n\nPuladas:\n- addi t2, x0, 1\n- j L2\n\nCaminho executado:\nblt -> L1 -> addi t2, x0, 2 -> L2 -> addi t2, t2, 3\n\nValor final: t2 = 5.'
-          },
-          {
-            points: 20,
-            title: 'Armadilha na contagem do laço',
-            prompt: 'Esse laço termina? Quantas vezes o corpo do laço é executado?',
-            code: `li t0, 3\n\nloop:\n    addi t0, t0, -1\n    bge t0, x0, loop`,
-            hint: 'Acompanhe t0 depois do decremento, não antes.',
-            answer: 'Sim, ele termina.\n\nValores após cada decremento: 2, 1, 0, -1.\nO branch repete enquanto t0 >= 0.\n\nEntão o corpo executa 4 vezes, e não 3.'
-          },
-          {
-            points: 30,
-            title: 'Que construção de alto nível é essa?',
-            prompt: 'Explique o que esse trecho calcula e a que laço de alto nível ele corresponde.',
-            code: `li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    add t1, t1, t0\n    addi t0, t0, 1\n    j loop\n\nend:`,
-            hint: 't0 se comporta como um índice ou contador. t1 é um acumulador.',
-            answer: 'Ele soma os inteiros de 0 até a0 - 1.\n\nPapéis dos registradores:\n- t0 = contador do laço\n- t1 = soma acumulada\n\nCódigo equivalente em alto nível:\nfor (i = 0; i < a0; i++) sum += i;\n\nSignificado final: t1 = 0 + 1 + 2 + ... + (a0 - 1).'
-          },
-          {
-            "points": 40,
-            "title": "Laço com branch condicional interno",
-            "prompt": "Suponha que a0 = 5. Quantas vezes o bloco \"odd\" é executado e qual é o valor final de t1?",
-            "askAloud": "Peça para a equipe acompanhar o valor de t0 a cada iteração e identificar em quais casos o branch para odd é tomado.",
-            "code": "li t0, 0\nli t1, 0\n\nloop:\n    bge t0, a0, end\n    andi t2, t0, 1\n    bnez t2, odd\n    addi t1, t1, 10\n    j next\n\nodd:\n    addi t1, t1, 1\n\nnext:\n    addi t0, t0, 1\n    j loop\n\nend:",
-            "hint": "O teste com andi verifica se t0 é ímpar ou par.",
-            "answer": "Com a0 = 5, o laço executa para t0 = 0, 1, 2, 3, 4.\n\nCasos pares (0, 2, 4): somam 10 em t1.\nCasos ímpares (1, 3): executam odd e somam 1 em t1.\n\nO bloco odd executa 2 vezes.\nValor final de t1 = 10 + 1 + 10 + 1 + 10 = 32."
-          }
-        ]
+            "category": "Fluxo de Controle",
+            "questions": [
+                                    {
+                        "points": 10,
+                        "title": "`",
+                        "prompt": "Suponha que a0 = 5. Qual é o valor final de t1 e quantas vezes o bloco de subtração é executado?",
+                        "code": "li t0, 0\nli t1, 1\n\nloop:\n    bge t0, a0, end\n    blt t0, 3, small\n    sub t1, t1, t0\n    j next\n\nsmall:\n    add t1, t1, t0\n\nnext:\n    addi t0, t0, 1\n    j loop\n\nend:",
+                        "askAloud": "",
+                        "hint": "Para t0 = 0, 1 e 2 ocorre soma. Para t0 = 3 e 4 ocorre subtração.",
+                        "answer": "O laço executa para t0 = 0, 1, 2, 3, 4.\n\nComeçando com t1 = 1:\n- t0 = 0  -> t1 = 1 + 0 = 1\n- t0 = 1  -> t1 = 1 + 1 = 2\n- t0 = 2  -> t1 = 2 + 2 = 4\n- t0 = 3  -> t1 = 4 - 3 = 1\n- t0 = 4  -> t1 = 1 - 4 = -3\n\nValor final: t1 = -3.\nO bloco de subtração executa 2 vezes."
+                  },
+                  {
+                        "points": 20,
+                        "title": "",
+                        "prompt": "Suponha que a0 = 7. O que esse código calcula conceitualmente e qual é o valor final de t3?",
+                        "code": "li t0, 0\nli t3, 0\n\nloop:\n    bge t0, a0, end\n    andi t1, t0, 1\n    beqz t1, par\n    addi t3, t3, -2\n    j next\n\npar:\n    blt t0, 4, bonus\n    addi t3, t3, 1\n    j next\n\nbonus:\n    addi t3, t3, 3\n\nnext:\n    addi t0, t0, 1\n    j loop\n\nend:",
+                        "askAloud": "",
+                        "hint": "Há três casos: ímpar, par menor que 4, e par maior ou igual a 4.",
+                        "answer": "O laço percorre t0 = 0, 1, 2, 3, 4, 5, 6.\n\nRegras:\n- ímpar: soma -2\n- par e menor que 4: soma +3\n- par e maior ou igual a 4: soma +1\n\nIterações:\n- 0 -> par < 4  -> +3\n- 1 -> ímpar    -> -2\n- 2 -> par < 4  -> +3\n- 3 -> ímpar    -> -2\n- 4 -> par >= 4 -> +1\n- 5 -> ímpar    -> -2\n- 6 -> par >= 4 -> +1\n\nTotal: 3 - 2 + 3 - 2 + 1 - 2 + 1 = 2.\n\nConceitualmente, o código classifica cada valor do contador em três casos e acumula uma pontuação.\nValor final: t3 = 2."
+                  }
+            ]
       },
       {
-        category: 'Memória',
-        questions: [
-          {
-            points: 10,
-            title: 'O que muda na memória?',
-            prompt: 'Suponha que arr começa como 10, 20, 30, 40. Quais valores são carregados e qual é o vetor final?',
-            code: `.data\narr: .word 10, 20, 30, 40\n\n.text\nla t0, arr\nlw t1, 4(t0)\nlw t2, 8(t0)\nadd t3, t1, t2\nsw t3, 0(t0)`,
-            hint: 'Os offsets estão em bytes. Cada word tem 4 bytes.',
-            answer: 'Valores carregados:\n- t1 = 20\n- t2 = 30\n\nDepois t3 = 50 e 50 é armazenado em arr[0].\n\nVetor final: 50, 20, 30, 40.'
-          },
-          {
-            points: 20,
-            title: 'Qual elemento do vetor é acessado?',
-            prompt: 'Qual elemento é carregado e por que existe um shift de 2?',
-            code: `la t0, arr\nli t1, 3\nslli t1, t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
-            hint: 'Indexação de words precisa de escala por 4 bytes.',
-            answer: 'O código carrega arr[3].\n\nMotivo:\n- t1 começa com índice 3\n- shift à esquerda por 2 multiplica por 4\n- t2 = endereço base + 12\n- lw carrega a word nesse endereço\n\nO shift por 2 converte um índice de words em offset em bytes.'
-          },
-          {
-            points: 30,
-            title: 'lb vs lbu',
-            prompt: 'A memória no endereço 0x1000 contém o byte 0xFF. Qual é a diferença entre t1 e t2?',
-            code: `li t0, 0x1000\nlb  t1, 0(t0)\nlbu t2, 0(t0)`,
-            hint: 'Pense no que 0xFF significa como valor assinado de 8 bits.',
-            answer: 'lb faz extensão de sinal no byte. Como 0xFF é -1 em 8 bits com sinal, t1 vira -1 (todos os bits em 1 em 32 bits).\n\nlbu faz extensão com zeros, então t2 vira 255.\n\nValores finais:\n- t1 = -1\n- t2 = 255.'
-          }
-        ]
+            "category": "Memória",
+            "questions": [
+                  {
+                        "points": 10,
+                        "title": "",
+                        "prompt": "Suponha que no endereço base 0x1000 exista a word 0x1234ABCD em little-endian. Quais são os valores finais de t1, t2 e t3?",
+                        "code": "li t0, 0x1000\nlb  t1, 0(t0)\nlbu t2, 1(t0)\nlbu t3, 3(t0)",
+                        "askAloud": "",
+                        "hint": "Em little-endian, o byte menos significativo fica no menor endereço.",
+                        "answer": "A word 0x1234ABCD fica em memória, em little-endian, assim:\n- 0x1000 -> 0xCD\n- 0x1001 -> 0xAB\n- 0x1002 -> 0x34\n- 0x1003 -> 0x12\n\nEntão:\n- lb  t1, 0(t0)  carrega 0xCD com sinal -> t1 = -51\n- lbu t2, 1(t0) carrega 0xAB sem sinal -> t2 = 171\n- lbu t3, 3(t0) carrega 0x12 sem sinal -> t3 = 18"
+                  },
+                  {
+                        "points": 20,
+                        "title": "",
+                        "prompt": "Suponha que arr começa com os valores 6, 2, 8, 5. Qual é o vetor final e qual valor termina em t6?",
+                        "code": ".data\narr: .word 6, 2, 8, 5\n\n.text\nla t0, arr\naddi t1, t0, 4\nlw t2, 0(t1)\nlw t3, 8(t0)\nadd t4, t2, t3\nsw t4, 0(t0)\nlw t5, 0(t0)\nsub t6, t5, t2\nsw t6, 12(t0)",
+                        "askAloud": "",
+                        "hint": "t1 = t0 + 4 aponta para arr[1]. O load em 8(t0) pega arr[2].",
+                        "answer": "Valores iniciais:\narr = [6, 2, 8, 5]\n\nPassos:\n- t1 = t0 + 4 -> aponta para arr[1]\n- t2 = arr[1] = 2\n- t3 = arr[2] = 8\n- t4 = 2 + 8 = 10\n- sw t4, 0(t0) -> arr[0] = 10\n- t5 = arr[0] = 10\n- t6 = 10 - 2 = 8\n- sw t6, 12(t0) -> arr[3] = 8\n\nVetor final: [10, 2, 8, 8].\nValor final de t6 = 8."
+                  }
+            ]
       },
       {
-        category: 'Construção de Endereços',
-        questions: [
-          {
-            points: 10,
-            title: 'Complete o endereço',
-            prompt: 'Qual instrução entra no espaço em branco e que valor termina em t0?',
-            code: `lui t0, 0x12345\n_____ t0, t0, 0x678`,
-            hint: 'lui fornece os 20 bits de cima. Algo mais precisa completar a parte baixa.',
-            answer: 'A instrução faltando é addi.\n\nResultado:\nt0 = 0x12345000 + 0x678 = 0x12345678.\n\nPor que lui sozinho não basta: ele apenas coloca os 20 bits superiores e zera os 12 bits inferiores.'
-          },
-          {
-            points: 20,
-            title: 'Pensando em PC-relative',
-            prompt: 'Suponha que essa instrução auipc esteja no endereço 0x00010000. Que valor termina em t0?',
-            code: `auipc t0, 0x1\naddi  t0, t0, 16`,
-            hint: 'auipc soma ao PC atual o imediato deslocado 12 bits à esquerda.',
-            answer: 'auipc t0, 0x1 significa: t0 = PC + (0x1 << 12).\n\nCom PC = 0x00010000:\n- após auipc: t0 = 0x00011000\n- após addi 16: t0 = 0x00011010\n\nValor final: 0x00011010.\n\nConceitualmente, isso é formação de endereço relativa ao PC.'
-          },
-          {
-            points: 30,
-            title: 'la vs expansão manual',
-            prompt: 'A pseudoinstrução la carrega um endereço. Qual par de instruções reais normalmente é usado por baixo em estilo position-independent e por quê?',
-            code: `la t0, label`,
-            hint: 'Pense em endereçamento relativo ao PC, não absoluto.',
-            answer: 'Uma expansão comum se baseia em auipc mais uma instrução que soma o offset, como addi, com relocations tratadas pelo assembler e pelo linker.\n\nIdeia central:\n- auipc forma uma base relativa ao PC\n- addi completa o endereço\n\nPor quê: isso permite código position-independent e evita fixar um único endereço absoluto no fluxo de instruções.'
-          }
-        ]
+            "category": "Construção de Endereços",
+            "questions": [
+                  {
+                        "points": 10,
+                        "title": "",
+                        "prompt": "Qual é o valor final em t0 após a execução?",
+                        "code": "lui  t0, 0xABCDE\naddi t0, t0, -16",
+                        "askAloud": "",
+                        "hint": "lui coloca os 20 bits superiores e zera os 12 inferiores.",
+                        "answer": "Após `lui t0, 0xABCDE`, temos:\nt0 = 0xABCDE000\n\nDepois, `addi t0, t0, -16` subtrai 0x10:\nt0 = 0xABCDE000 - 0x10 = 0xABCDDFF0\n\nValor final: 0xABCDDFF0."
+                  },
+                  {
+                        "points": 20,
+                        "title": "",
+                        "prompt": "Explique o que esse código faz e calcule o valor final de t2, assumindo que a instrução auipc está no endereço 0x00100020.",
+                        "code": "auipc t2, 0xFFFFF\naddi  t2, t2, 32",
+                        "askAloud": "",
+                        "hint": "No auipc, o imediato é sign-extended antes do deslocamento.",
+                        "answer": "O imediato 0xFFFFF em 20 bits representa -1.\n\nEntão:\n- (-1) << 12 = -4096 = -0x1000\n- PC = 0x00100020\n- após auipc: t2 = 0x00100020 - 0x1000 = 0x000FF020\n- após addi de 32: t2 = 0x000FF040\n\nConceitualmente, o código forma um endereço relativo ao PC usando um deslocamento negativo e depois ajusta a parte baixa.\nValor final: 0x000FF040."
+                  }
+            ]
       },
       {
-        category: 'Caça a Bugs',
-        questions: [
-          {
-            points: 10,
-            title: 'Store faltando',
-            prompt: 'O programador quer incrementar cada elemento de um vetor. Por que isso falha?',
-            code: `la t0, arr\nli t1, 3\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 1\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop`,
-            hint: 'Um registrador mudou, mas a memória não.',
-            answer: 'O código carrega cada elemento e incrementa o valor em t2, mas nunca grava o resultado de volta.\n\nInstrução faltando: sw t2, 0(t0)\n\nEla deveria aparecer antes do avanço do ponteiro.'
-          },
-          {
-            points: 20,
-            title: 'Escala de índice errada',
-            prompt: 'Se o programador quisesse arr[2], o que está errado aqui?',
-            code: `la t0, arr\nli t1, 2\nadd t2, t0, t1\nlw t3, 0(t2)`,
-            hint: 'Índice de vetor não é a mesma coisa que offset em bytes.',
-            answer: 'O código soma o índice bruto 2 diretamente ao endereço base. Isso significa andar 2 bytes, e não 2 words.\n\nBug: índice sem escala por 4.\n\nCorreções possíveis:\n- slli t1, t1, 2 ; add t2, t0, t1\n- ou usar diretamente lw t3, 8(t0) se o índice já for conhecido.'
-          },
-          {
-            points: 30,
-            title: 'Dois bugs',
-            prompt: 'Esse laço deveria somar 10 a cada elemento do vetor. Encontre os dois bugs.',
-            code: `la t0, arr\nli t1, 4\n\nloop:\n    lw t2, 0(t0)\n    addi t2, t2, 10\n    addi t0, t0, 4\n    bnez t1, loop`,
-            hint: 'Pense no que muda na memória e no que faz um laço progredir.',
-            answer: 'Bug 1: falta o store. O valor atualizado em t2 nunca é gravado de volta na memória.\n\nBug 2: t1 nunca é decrementado, então o laço não termina.\n\nUma versão correta precisaria dos dois:\n- sw t2, 0(t0)\n- addi t1, t1, -1'
-          }
-        ]
+            "category": "Caça a Bugs",
+            "questions": [
+                                    {
+                        "points": 10,
+                        "title": "",
+                        "prompt": "Esse código deveria somar os 4 elementos de arr em t2. Qual é o bug lógico e como corrigir?",
+                        "code": "la t0, arr\nli t1, 4\nli t2, 0\n\nloop:\n    lw t3, 0(t0)\n    add t2, t2, t3\n    addi t0, t0, 4\n    bnez t1, loop",
+                        "askAloud": "",
+                        "hint": "O laço nunca altera o contador.",
+                        "answer": "O bug é que t1 foi inicializado com 4, mas nunca é decrementado.\n\nAssim, `bnez t1, loop` sempre será verdadeiro e o laço não termina.\n\nCorreção:\n\nloop:\n    lw t3, 0(t0)\n    add t2, t2, t3\n    addi t0, t0, 4\n    addi t1, t1, -1\n    bnez t1, loop"
+                  },
+                  {
+                        "points": 20,
+                        "title": "",
+                        "prompt": "O programador quer verificar se um byte da memória é negativo. Explique por que o teste abaixo está errado e dê uma correção.",
+                        "code": "li  t0, 0x1000\nlbu t1, 0(t0)\nblt t1, x0, neg",
+                        "askAloud": "",
+                        "hint": "Uma carga unsigned nunca produz um valor negativo em t1.",
+                        "answer": "O problema é que `lbu` faz extensão com zeros. Portanto, o valor carregado em t1 estará sempre entre 0 e 255.\n\nAssim, o teste `blt t1, x0, neg` nunca será verdadeiro.\n\nSe a intenção é interpretar o byte como valor com sinal, a correção é usar `lb`:\n\nli  t0, 0x1000\nlb  t1, 0(t0)\nblt t1, x0, neg\n\nAgora bytes como 0xFF serão interpretados como -1, e o branch poderá ser tomado."
+                  }
+            ]
       },
-      {
-        category: 'Desafio Misto',
-        questions: [
+
+        {
+      "category": "Desafio Misto",
+      "questions": [
+            
+            {
+                  "points": 10,
+                  "title": "",
+                  "prompt": "Dois alunos discutem após uma prova:\n\nAluno A: “`blt` e `bltu` dão sempre o mesmo resultado, porque ambos comparam números.”\nAluno B: “Não, eles podem dar respostas diferentes para os mesmos bits.”\n\nQuem está certo? Explique por quê e dê a ideia central da diferença.",
+                  "code": "",
+                  "askAloud": "",
+                  "hint": "A comparação muda quando o processador interpreta os bits como valor com sinal ou sem sinal.",
+                  "answer": "O Aluno B está certo.\n\n`blt` faz comparação com sinal, enquanto `bltu` faz comparação sem sinal.\n\nIsso significa que o mesmo padrão de bits pode representar valores diferentes dependendo da interpretação:\n- com sinal: um valor pode ser negativo\n- sem sinal: aquele mesmo padrão pode representar um valor bem alto\n\nPor isso, duas instruções diferentes podem chegar a conclusões diferentes usando os mesmos bits nos registradores.\n\nIdeia central:\n- `blt` = comparação signed\n- `bltu` = comparação unsigned\n\nEssa é uma das pegadinhas clássicas de assembly: os bits são os mesmos, mas o significado matemático pode mudar."
+            },
           {
-            points: 10,
-            title: 'Que pseudoinstrução é essa?',
-            prompt: 'Diga a pseudoinstrução equivalente a cada forma de instrução real.',
-            code: `addi t0, t1, 0\njal  x0, label\njalr x0, 0(ra)`,
-            hint: 'Essas três aparecem o tempo todo em código 
+      "points": 20,
+      "title": "",
+      "prompt": "Dois alunos discutem depois de uma soma em binário:\n\nAluno A: “Se o resultado de uma soma ficou estranho, então sempre houve overflow.”\nAluno B: “Não. Carry e overflow não são a mesma coisa, e às vezes pode haver um sem o outro.”\n\nQuem está certo? Explique conceitualmente a diferença entre carry e overflow.",
+      "code": "",
+      "askAloud": "",
+      "hint": "Carry está ligado ao vai-um da soma. Overflow está ligado a erro de representação com sinal.",
+      "answer": "O Aluno B está certo.\n\nCarry e overflow não são a mesma coisa.\n\n- Carry é o vai-um que sai do bit mais significativo em uma soma. Ele é mais relevante quando pensamos em números sem sinal.\n- Overflow acontece quando o resultado de uma operação com sinal não cabe na quantidade de bits disponível.\n\nExemplo conceitual:\n- Pode haver carry sem overflow\n- Pode haver overflow sem carry\n- Pode haver ambos\n- Pode não haver nenhum\n\nA ideia central é:\n- carry = fenômeno da soma binária bruta\n- overflow = problema de interpretação do resultado em números com sinal\n\nPor isso, olhar apenas para um resultado “estranho” não basta para concluir overflow. É preciso considerar como os bits estão sendo interpretados."
+}
+      ]
+},
+{
+      "category": "Binário e Hexadecimal",
+      "questions": [
+            {
+                  "points": 10,
+                  "title": "",
+                  "prompt": "Em 8 bits, qual número decimal é representado pelo padrão binário `11110110`, assumindo representação em complemento de dois?",
+                  "code": "// Pergunta teórica\n// 11110110 em 8 bits com sinal = ?",
+                  "askAloud": "",
+                  "hint": "Se o bit mais significativo for 1, o número é negativo em complemento de dois.",
+                  "answer": "Como o bit mais significativo é 1, o número é negativo.\n\nPara descobrir o módulo:\n1. Inverta os bits: `00001001`\n2. Some 1: `00001010`\n3. Isso vale 10 em decimal\n\nLogo, `11110110` representa `-10` em decimal."
+            },
+            {
+                  "points": 20,
+                  "title": "",
+                  "prompt": "Um endereço de memória é `0x0000003C`. Se avançarmos 5 posições em um vetor de bytes, qual será o novo endereço? E se forem 5 posições em um vetor de words de 4 bytes?",
+                  "code": "// Pergunta teórica\n// Endereço inicial: 0x0000003C",
+                  "askAloud": "",
+                  "hint": "Byte avança de 1 em 1. Word de 4 bytes avança de 4 em 4.",
+                  "answer": "Endereço inicial:\n- `0x0000003C`\n\nCaso 1: vetor de bytes\n- avançar 5 posições = somar 5\n- `0x3C + 0x05 = 0x41`\n\nNovo endereço:\n- `0x00000041`\n\nCaso 2: vetor de words de 4 bytes\n- avançar 5 posições = somar `5 × 4 = 20` decimal = `0x14`\n- `0x3C + 0x14 = 0x50`\n\nNovo endereço:\n- `0x00000050`\n\nIdeia central: o deslocamento depende do tamanho de cada elemento."
+            }
+      ]
+}
+        ,
+      {
+            "category": "Tradução de C para Assembly",
+            "questions": [
+                  {
+                        "points": 10,
+                        "title": "",
+                        "prompt": "Traduza para RISC-V, assumindo x em s0 e y em s1: if (x != y) x = x - y; else x = x + 1;",
+                        "code": "// C\nif (x != y)\n    x = x - y;\nelse\n    x = x + 1;",
+                        "askAloud": "",
+                        "hint": "Use beq para detectar o caso em que x e y são iguais.",
+                        "answer": "Uma tradução possível é:\n\nbeq  s0, s1, equal\nsub  s0, s0, s1\nj    end\n\nequal:\naddi s0, s0, 1\n\nend:"
+                  },
+                  {
+                        "points": 20,
+                        "title": "",
+                        "prompt": "Traduza para RISC-V, assumindo base de arr em s0, i em s1 e sum em s2: while (i < 4) { sum += arr[i]; i++; }",
+                        "code": "// C\nwhile (i < 4) {\n    sum += arr[i];\n    i++;\n}",
+                        "askAloud": "",
+                        "hint": "Você precisa de teste do laço, cálculo de endereço, load e incremento de i.",
+                        "answer": "Uma tradução possível é:\n\nloop:\nli   t0, 4\nbge  s1, t0, end\nslli t1, s1, 2\nadd  t1, s0, t1\nlw   t2, 0(t1)\nadd  s2, s2, t2\naddi s1, s1, 1\nj    loop\n\nend:"
+                  },
+                              ]
+      }
+];
+
+    const state = {
+      scoreA: 0,
+      scoreB: 0,
+      currentTeam: 'A',
+      currentQuestion: null,
+      used: new Set()
+    };
+
+    const boardEl = document.getElementById('board');
+    const scoreAEl = document.getElementById('scoreA');
+    const scoreBEl = document.getElementById('scoreB');
+    const teamANameEl = document.getElementById('teamAName');
+    const teamBNameEl = document.getElementById('teamBName');
+    const turnBadgeEl = document.getElementById('turnBadge');
+    const modalEl = document.getElementById('questionModal');
+    const hintBoxEl = document.getElementById('hintBox');
+    const answerBoxEl = document.getElementById('answerBox');
+
+    function teamName(team) {
+      return team === 'A' ? teamANameEl.value || 'Equipe A' : teamBNameEl.value || 'Equipe B';
+    }
+
+    function updateTurnBadge() {
+      turnBadgeEl.textContent = `Vez atual: ${teamName(state.currentTeam)}`;
+    }
+
+    function renderScores() {
+      scoreAEl.textContent = state.scoreA;
+      scoreBEl.textContent = state.scoreB;
+      updateTurnBadge();
+    }
+
+    function adjustScore(team, delta) {
+      if (team === 'A') state.scoreA += delta;
+      else state.scoreB += delta;
+      renderScores();
+    }
+
+    function switchTurn() {
+      state.currentTeam = state.currentTeam === 'A' ? 'B' : 'A';
+      renderScores();
+      if (state.currentQuestion) {
+        document.getElementById('modalTurn').textContent = `Vez: ${teamName(state.currentTeam)}`;
+      }
+    }
+
+    function resetScores() {
+      state.scoreA = 0;
+      state.scoreB = 0;
+      renderScores();
+    }
+
+    function resetBoard() {
+      state.used.clear();
+      closeModal();
+      buildBoard();
+    }
+
+    function qid(catIndex, qIndex) {
+      return `${catIndex}-${qIndex}`;
+    }
+
+    function buildBoard() {
+      boardEl.innerHTML = '';
+      gameData.forEach((category, catIndex) => {
+        const card = document.createElement('section');
+        card.className = 'category';
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.textContent = category.category;
+        card.appendChild(header);
+
+        const qs = document.createElement('div');
+        qs.className = 'questions';
+
+        category.questions.forEach((q, qIndex) => {
+          const button = document.createElement('button');
+          const id = qid(catIndex, qIndex);
+          button.className = 'qbtn';
+          button.textContent = q.points;
+          if (state.used.has(id)) {
+            button.classList.add('used');
+            button.disabled = true;
+          } else {
+            button.addEventListener('click', () => openQuestion(catIndex, qIndex));
+          }
+          qs.appendChild(button);
+        });
+
+        card.appendChild(qs);
+        boardEl.appendChild(card);
+      });
+    }
+
+    function openQuestion(catIndex, qIndex) {
+      const q = gameData[catIndex].questions[qIndex];
+      state.currentQuestion = { ...q, catIndex, qIndex, id: qid(catIndex, qIndex) };
+
+      document.getElementById('modalTitle').textContent = q.title;
+      document.getElementById('modalCategory').textContent = gameData[catIndex].category;
+      document.getElementById('modalPoints').textContent = `${q.points} pontos`;
+      document.getElementById('modalTurn').textContent = `Vez: ${teamName(state.currentTeam)}`;
+      document.getElementById('modalPrompt').textContent = q.prompt;
+      document.getElementById('modalCode').textContent = q.code;
+      document.getElementById('modalAskAloud').textContent = q.askAloud;
+      document.getElementById('modalHint').textContent = q.hint;
+      document.getElementById('modalAnswer').textContent = q.answer;
+      hintBoxEl.classList.remove('show');
+      answerBoxEl.classList.remove('show');
+      modalEl.classList.add('show');
+    }
+
+    function closeModal() {
+      modalEl.classList.remove('show');
+      state.currentQuestion = null;
+    }
+
+    function toggleReveal(type) {
+      if (type === 'hint') hintBoxEl.classList.toggle('show');
+      if (type === 'answer') answerBoxEl.classList.toggle('show');
+    }
+
+    function markClosed() {
+      if (!state.currentQuestion) return;
+      state.used.add(state.currentQuestion.id);
+      buildBoard();
+      closeModal();
+    }
+
+    function awardCurrent() {
+      if (!state.currentQuestion) return;
+      adjustScore(state.currentTeam, state.currentQuestion.points);
+    }
+
+    function awardSteal() {
+      if (!state.currentQuestion) return;
+      const other = state.currentTeam === 'A' ? 'B' : 'A';
+      adjustScore(other, Math.floor(state.currentQuestion.points / 2));
+    }
+
+    async function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    teamANameEl.addEventListener('input', renderScores);
+    teamBNameEl.addEventListener('input', renderScores);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalEl.classList.contains('show')) closeModal();
+    });
+
+    renderScores();
+    buildBoard();
+  </script>
+</body>
+</html>
